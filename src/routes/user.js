@@ -1,6 +1,7 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
 import { insertOne, selectPasswordByUsername } from "../sql/index.js"
 import { asyncHandler, encrypt, getResponData } from "../utils/index.js"
+import { signAuth } from "../auth/index.js"
 
 /**
  * 注册用户
@@ -70,6 +71,11 @@ export const login = asyncHandler(async (req, res) => {
         res.status(200).send(resData)
         return
     }
+
+    // 生成 token 并分配到 cookie 中
+    const userId = result[0].id
+    signAuth(res, userId, username)
+
 
     /**
      * @type {ResLoginData}
