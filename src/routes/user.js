@@ -4,6 +4,15 @@ import { asyncHandler, encrypt, getResponData } from "../utils/index.js"
 import { signAuth } from "../auth/index.js"
 
 /**
+ * 能进入到这里，说明没有过期
+ */
+export const isAuthExpired = asyncHandler(async (req, res) => {
+    const resData = getResponData()
+    res.send(resData)
+})
+
+
+/**
  * 注册用户
  */
 export const signup = asyncHandler(async (req, res) => {
