@@ -1,6 +1,6 @@
-import { CODE_FAILED } from "../constants/response.js"
-import { getResponData } from "../utils/generate.js"
-import { jwtSign, jwtVerify } from "./index.js"
+import { CODE_FAILED } from '../constants/response.js'
+import { getRespondData } from '../utils/generate.js'
+import { jwtSign, jwtVerify } from './index.js'
 
 /**
  * 根据 userId 和 username 生成 token 并放入到 cookie 中
@@ -32,14 +32,14 @@ export function midVerifyAuth(req, res, next) {
     if (!isError) {
         next()
     } else if (isError === 1) {
-        res.status(401).send(getResponData(
-            "failed",
+        res.status(401).send(getRespondData(
+            'failed',
             CODE_FAILED,
             '凭据已过期',
         ))
     } else {
-        res.status(401).send(getResponData(
-            "failed",
+        res.status(401).send(getRespondData(
+            'failed',
             CODE_FAILED,
             '未获得授权',
         ))

@@ -1,4 +1,4 @@
-import { getOneConn, useOneConn } from "./index.js"
+import { useOneConn } from './index.js'
 
 /**
  * 根据 username 在 user 表中进行查找对于的密码

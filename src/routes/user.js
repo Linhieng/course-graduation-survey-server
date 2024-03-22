@@ -1,13 +1,13 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
-import { insertOne, selectPasswordByUsername } from "../sql/index.js"
-import { asyncHandler, encrypt, getResponData } from "../utils/index.js"
-import { signAuth } from "../auth/index.js"
+import { insertOne, selectPasswordByUsername } from '../sql/index.js'
+import { asyncHandler, encrypt, getRespondData } from '../utils/index.js'
+import { signAuth } from '../auth/index.js'
 
 /**
  * 能进入到这里，说明没有过期
  */
 export const isAuthExpired = asyncHandler(async (req, res) => {
-    const resData = getResponData()
+    const resData = getRespondData()
     res.send(resData)
 })
 
@@ -16,7 +16,7 @@ export const isAuthExpired = asyncHandler(async (req, res) => {
  * 注册用户
  */
 export const signup = asyncHandler(async (req, res) => {
-    const resData = getResponData()
+    const resData = getRespondData()
     /**
      * @type {ReqUserSignup}
      */
@@ -40,7 +40,7 @@ export const signup = asyncHandler(async (req, res) => {
          */
         const data = {
             id: result.insertId,
-            username
+            username,
         }
         resData.data = data
         res.status(200).send(resData)
@@ -56,7 +56,7 @@ export const login = asyncHandler(async (req, res) => {
      * @type {ReqUserLogin}
      */
     const reqData = req.body
-    const resData = getResponData()
+    const resData = getRespondData()
     const username = reqData.username
     const password = reqData.password
     const password_hash = encrypt(password)
@@ -91,7 +91,7 @@ export const login = asyncHandler(async (req, res) => {
      */
     const data = {
         id: result[0].id,
-        username: result[0].username
+        username: result[0].username,
     }
     resData.status = STATUS_SUCCEED
     resData.code = CODE_SUCCEED

@@ -5,7 +5,9 @@
     "license": "ISC",
     "type": "module",
     "scripts": {
-        "dev": "nodemon ./src/index.js"
+        "dev": "nodemon ./src/index.js",
+        "lint": "eslint src/**/*.js ",
+        "lint:fix": "eslint src/**/*.js --fix"
     },
     "dependencies": {
         "cookie-parser": "^1.4.6",
@@ -16,8 +18,11 @@
         "mysql2": "^3.9.2"
     },
     "devDependencies": {
+        "@types/eslint__js": "^8.42.3",
         "@types/express": "^4.17.21",
         "@types/jsonwebtoken": "^9.0.6",
+        "eslint": "^8.57.0",
+        "globals": "^14.0.0",
         "nodemon": "^3.1.0"
     }
 }

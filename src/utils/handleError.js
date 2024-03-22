@@ -1,5 +1,5 @@
-import { CODE_ERROR, CODE_UNKNOWN_ERROR } from "../constants/response.js"
-import { getResponData } from "./generate.js"
+import { CODE_ERROR, CODE_UNKNOWN_ERROR } from '../constants/response.js'
+import { getRespondData } from './generate.js'
 
 /**
  * 路由时如果使用 async，则需要使用该函数进行包裹，目的是为了将异步中的错误抛给默认错误处理中间件处理
@@ -22,9 +22,9 @@ export const asyncHandler = requesthandler => (req, res, next) => {
  * @param {any} res
  * @param {any} next
  */
-export function defaultHandler(err, req, res, next) {
+export function defaultHandler(err, req, res, _next) {
     console.error(err)
-    const resData = getResponData('failed', CODE_UNKNOWN_ERROR, '未知错误！请联系网站负责人。')
+    const resData = getRespondData('failed', CODE_UNKNOWN_ERROR, '未知错误！请联系网站负责人。')
     if (err.__explain) {
         resData.code = CODE_ERROR
         resData.msg = err.__explain

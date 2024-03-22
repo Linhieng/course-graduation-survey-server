@@ -1,4 +1,4 @@
-import { getResponData } from "../utils/index.js"
+import { getRespondData } from '../utils/index.js'
 
 /**
  * 获取当前用户的所有问卷，包含已经被标记为删除的。
@@ -7,7 +7,7 @@ import { getResponData } from "../utils/index.js"
  * @param {ExpressResponse} res
  */
 export function getAllQuestionnaires(req, res) {
-    const resData = getResponData()
+    const resData = getRespondData()
     resData.data = {all_questionnaire: ['1', '2']}
     res.send(resData)
 }

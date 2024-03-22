@@ -2,6 +2,13 @@
 
 根据开发过程，按时间顺序编写。上面新，下面旧。
 
+## 启用 eslint
+
+1. `npm i --save-dev @types/eslint__js eslint`
+2. 配置 eslint.config.js
+3. 设置 `eslint.experimental.useFlatConfig`
+4. 添加 link 脚本：`eslint src/**/*.js`、`eslint src/**/*.js --fix`
+
 ## set-cookie 不生效
 
 因为项目是前后端开发分离的，两者之间属于跨域请求。
