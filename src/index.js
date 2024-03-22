@@ -17,10 +17,7 @@ initConnPool({
 })
 
 // 配置跨域问题，此时使用 nginx 进行反向代理
-app.use(cors({
-    origin: ['https://localhost', 'https://127.0.0.1', 'http://localhost:5173'],
-    credentials: true,
-}))
+app.use(cors())
 // 填充 req.body 参数
 app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded

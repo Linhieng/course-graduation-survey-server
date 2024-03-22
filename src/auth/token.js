@@ -12,9 +12,10 @@ import { jwtSign, jwtVerify } from './index.js'
 export function signAuth(res, userId, username) {
     const token = jwtSign(userId, username)
 
-    res.cookie('token', token, {sameSite:'none', secure: true})
-    res.cookie('userId', userId, {sameSite:'none', secure: true})
-    res.cookie('username', username, {sameSite:'none', secure: true})
+    res.setHeader('Access-Control-Expose-Headers', 'x-token,x-userID,x-username')
+    res.setHeader('x-token', token)
+    res.setHeader('x-userID', userId)
+    res.setHeader('x-username', username)
 }
 
 /**
@@ -25,9 +26,10 @@ export function signAuth(res, userId, username) {
  * @param {ExpressNextFunction} next
  */
 export function midVerifyAuth(req, res, next) {
-    /** @type {AuthObj} */
-    const cookies = req.cookies
-    const { token, userId, username } = cookies
+    const token = req.headers['token']
+    const userId = req.headers['userid']
+    const username = req.headers['username']
+
     const isError = jwtVerify(token, Number.parseInt(userId), username)
     if (!isError) {
         next()
