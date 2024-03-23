@@ -72,3 +72,6 @@ interface ResSignupData {
     username: string
 }
 type ResSignup = ResWrapper<ResSignupData>
+
+
+type ResGetAllSurveyData = SchemaQuestionnaire

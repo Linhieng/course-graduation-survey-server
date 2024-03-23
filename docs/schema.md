@@ -19,3 +19,12 @@
 - 每个字段都应该限制为 `NOT NULL`
 - 不要使用枚举类型
 - 使用 TINYINT 类型代替 BOOLEAN 类型
+
+## 表的说明
+
+一张用户表 user
+一份问卷表 questionnaire
+    问卷约束表 questionnaire_constrain
+    问卷的 JSON 内容表 questionnaire_detail
+一份问卷回答表 questionnaire_answer
+    问卷的 JSON 格式的回答表 questionnaire_answer_detail
