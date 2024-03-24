@@ -15,7 +15,7 @@ export const GetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */re
     if (!id || Number,isNaN(id)) {
         resData.status = STATUS_FAILED
         resData.msg = '问卷id格式错误'
-        res.statusCode(422).send(resData)
+        res.status(422).send(resData)
         return
     }
 
@@ -23,7 +23,7 @@ export const GetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */re
     if (result === 'Not Found') {
         resData.status = STATUS_FAILED
         resData.msg = '不存在此问卷'
-        res.statusCode(404).send(resData)
+        res.status(404).send(resData)
         return
     }
 
@@ -33,13 +33,13 @@ export const GetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */re
     if (survey.is_deleted) {
         resData.status = STATUS_FAILED
         resData.msg = '问卷已经被删除'
-        res.statusCode(404).send(resData)
+        res.status(404).send(resData)
         return
     }
     // if (!survey.is_valid) {
     //     resData.status = STATUS_FAILED
     //     resData.msg = '问卷已经停止收集'
-    //     res.statusCode(404).send(resData)
+    //     res.status(404).send(resData)
     //     return
     // }
 
