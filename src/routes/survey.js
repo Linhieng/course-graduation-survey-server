@@ -1,6 +1,67 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById } from '../sql/survey.js'
+import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlToggleSurveyDeleted } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
+
+export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = req.params.surveyId
+    if (!surveyId || Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        resData.msg = 'surveyId wrong'
+        res.status(400).send(resData)
+        return
+    }
+
+    let valid_status = req.query.valid
+    if (valid_status === '1') {
+        valid_status = 1
+    } else if (valid_status === '0') {
+        valid_status = 0
+    } else {
+        valid_status = undefined
+    }
+
+    const result = await sqlToggleSurveyDeleted(surveyId, valid_status)
+    if (result === 'Not Found') {
+        resData.status = STATUS_FAILED
+        resData.msg = 'surveyId not exist'
+        res.status(400).send(resData)
+        return
+    }
+
+    res.send(resData)
+})
+export const toggleSurveyDelete = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = req.params.surveyId
+    if (!surveyId || Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        resData.msg = 'surveyId wrong'
+        res.status(400).send(resData)
+        return
+    }
+
+    let deleted_status = req.query.del
+    if (deleted_status === '1') {
+        deleted_status = 1
+    } else if (deleted_status === '0') {
+        deleted_status = 0
+    } else {
+        deleted_status = undefined
+    }
+
+    const result = await sqlToggleSurveyDeleted(surveyId, deleted_status)
+    if (result === 'Not Found') {
+        resData.status = STATUS_FAILED
+        resData.msg = 'surveyId not exist'
+        res.status(400).send(resData)
+        return
+    }
+
+    res.send(resData)
+})
 
 /**
  * 根据问卷 id 获取问卷信息

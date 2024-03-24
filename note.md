@@ -2,6 +2,21 @@
 
 根据开发过程，按时间顺序编写。上面新，下面旧。
 
+## 捕获异步错误
+
+对于 async 函数，虽然可以通过 asyncHandle 处理异步错误，但实际写代码中，更常见的错误是忘记使用 await 了，
+比如使用 mysql 时忘记 await 了
+导致异步错误抛出执行栈，最终导致程序奔溃停止。
+
+所以应该提供一个基于 nodejs 的全局异步错误捕获
+
+```js
+// index.js
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason)
+})
+```
+
 ## 启用 eslint
 
 1. `npm i --save-dev @types/eslint__js eslint`

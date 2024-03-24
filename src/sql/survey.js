@@ -1,6 +1,56 @@
 import { useOneConn } from './index.js'
 
 /**
+ * 切换问卷的 valid 状态
+ *
+ * @param {TypeID} id
+ * @param {TypeID | undefined} valid_status
+ * @return {Promise<'Not Found' | 'ok'>}
+ */
+export const sqlToggleSurveyValid = (id, valid_status) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'SELECT is_valid FROM questionnaire WHERE id = ?;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+    const is_valid = valid_status || result[0][0]
+
+    sql = 'UPDATE questionnaire SET is_valid = ? WHERE id = ?;'
+    values = [is_valid, id]
+    conn.execute(sql, values)
+
+    return 'ok'
+})
+
+/**
+ * 切换问卷的删除状态
+ *
+ * @param {TypeID} id
+ * @param {TypeID | undefined} deleted_status
+ * @return {Promise<'Not Found' | 'ok'>}
+ */
+export const sqlToggleSurveyDeleted = (id, deleted_status) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'SELECT is_deleted FROM questionnaire WHERE id = ?;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+    const is_deleted = deleted_status || result[0][0]
+
+    sql = 'UPDATE questionnaire SET is_deleted = ? WHERE id = ?;'
+    values = [is_deleted, id]
+    conn.execute(sql, values)
+
+    return 'ok'
+})
+
+/**
  * 获取问卷信息，包括问卷详细信息。
  *
  * @param {TypeID} id

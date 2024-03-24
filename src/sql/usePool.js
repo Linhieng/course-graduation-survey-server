@@ -37,6 +37,8 @@ export async function useOneConn(cb) {
         let err = error
         if (err.code === 'ER_MALFORMED_PACKET') {
             error.__explain = 'ER_MALFORMED_PACKET：代码中 sql 代码编写错误'
+        } else if (err.code === 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD') {
+            error.__explain = 'ER_TRUNCATED_WRONG_VALUE_FOR_FIELD：代码中 sql 代码编写错误'
         }
 
         throw error
