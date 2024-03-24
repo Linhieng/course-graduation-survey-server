@@ -54,11 +54,18 @@ export const cacheSurvey = (survey) => useOneConn(async (conn) => {
  * @returns {Promise<TypeID>} 返回创建后的问卷 id
  */
 export const createNewSurvey = (title) => useOneConn(async (conn) => {
+    let sql, values, result
     let creator_id = 2
-    let sql = 'INSERT INTO `questionnaire` (`title`, `creator_id`) value (?, ?)'
-    let values = [title, creator_id]
-    let result = await conn.execute(sql, values)
-    return result[0].insertId
+    sql = 'INSERT INTO `questionnaire` (`title`, `creator_id`) value (?, ?)'
+    values = [title, creator_id]
+    result = await conn.execute(sql, values)
+    const id = result[0].insertId
+
+    // 同时初始化一条问卷具体内容信息
+    sql = 'INSERT INTO questionnaire_detail(structure_json, questionnaire_id) VALUE (?, ?)'
+    values = [{}, id]
+    await conn.execute(sql, values)
+    return id
 })
 
 /**
