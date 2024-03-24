@@ -65,7 +65,7 @@ export const getSurveyById = (id) => useOneConn(async (conn) => {
     sql = 'SELECT * FROM `questionnaire` WHERE id = ? LIMIT 1;'
     result = await conn.execute(sql, values)
     const surveys = result[0]
-    if (surveyDetails.length < 0 || surveys.length < 0) {
+    if (surveyDetails.length < 1 || surveys.length < 1) {
         return 'Not Found'
     }
 
