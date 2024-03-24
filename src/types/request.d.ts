@@ -18,3 +18,14 @@ interface ReqUserSignup {
     password: string
     email?: string
 }
+
+/**
+ * 定时缓存用户创建的问卷信息
+ */
+interface ReqSurveyAche {
+    id: TypeID
+    title: string
+    comment: string
+
+    structure_json: Object
+}

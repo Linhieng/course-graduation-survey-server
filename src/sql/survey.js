@@ -1,4 +1,30 @@
 import { useOneConn } from './index.js'
+
+/**
+ *
+ * @param {ReqSurveyAche} survey
+ * @returns
+ */
+export const cacheSurvey = (survey) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'UPDATE `questionnaire`  SET title = ?, comment = ? WHERE id = ?;'
+    values = [survey.title, survey.comment, survey.id]
+    await conn.execute(sql, values)
+
+    sql = 'SELECT id FROM `questionnaire_detail` WHERE questionnaire_id = ?;'
+    values = [survey.id]
+    result = await conn.execute(sql, values)
+
+    if (result[0].length < 1) {
+        sql = 'INSERT INTO `questionnaire_detail` (structure_json, questionnaire_id) VALUE (?, ?);'
+    } else {
+        sql = 'UPDATE `questionnaire_detail` SET structure_json = ? WHERE questionnaire_id = ?;'
+    }
+    values = [survey.structure_json, survey.id]
+    await conn.execute(sql, values)
+})
+
 /**
  * 初始化一份问卷
  *

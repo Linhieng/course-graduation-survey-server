@@ -75,3 +75,11 @@ type ResSignup = ResWrapper<ResSignupData>
 
 
 type ResGetAllSurveyData = SchemaQuestionnaire
+
+/**
+ * 缓存文件时响应的数据
+ */
+interface ResCacheSurveyData {
+    time: Date
+}
+type ResCacheSurvey = ResWrapper<ResCacheSurveyData>
