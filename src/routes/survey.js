@@ -73,7 +73,7 @@ export const GetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */re
     const resData = getRespondData()
 
     const id = Number(req.params.surveyId)
-    if (!id || Number,isNaN(id)) {
+    if (!id || Number.isNaN(id)) {
         resData.status = STATUS_FAILED
         resData.msg = '问卷id格式错误'
         res.status(422).send(resData)

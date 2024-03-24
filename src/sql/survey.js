@@ -20,7 +20,7 @@ export const sqlToggleSurveyValid = (id, valid_status) => useOneConn(async (conn
 
     sql = 'UPDATE questionnaire SET is_valid = ? WHERE id = ?;'
     values = [is_valid, id]
-    conn.execute(sql, values)
+    await conn.execute(sql, values)
 
     return 'ok'
 })
@@ -45,7 +45,7 @@ export const sqlToggleSurveyDeleted = (id, deleted_status) => useOneConn(async (
 
     sql = 'UPDATE questionnaire SET is_deleted = ? WHERE id = ?;'
     values = [is_deleted, id]
-    conn.execute(sql, values)
+    await conn.execute(sql, values)
 
     return 'ok'
 })
