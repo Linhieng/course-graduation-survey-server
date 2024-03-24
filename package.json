@@ -22,7 +22,6 @@
         "@types/express": "^4.17.21",
         "@types/jsonwebtoken": "^9.0.6",
         "eslint": "^8.57.0",
-        "eslint-plugin-promise": "^6.1.1",
         "globals": "^14.0.0",
         "nodemon": "^3.1.0"
     }

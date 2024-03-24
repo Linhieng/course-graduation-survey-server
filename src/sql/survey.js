@@ -45,7 +45,6 @@ export const sqlToggleSurveyDeleted = (id, deleted_status) => useOneConn(async (
 
     sql = 'UPDATE questionnaire SET is_deleted = ? WHERE id = ?;'
     values = [is_deleted, id]
-    // 此处应该有警告，因为它返回了一个 promise，但这里的代码却没有 catch 和 await
     conn.execute(sql, values)
 
     return 'ok'

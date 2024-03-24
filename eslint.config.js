@@ -1,11 +1,9 @@
 // @ts-check
 import js from '@eslint/js'
 import globals from 'globals'
-import promise from 'eslint-plugin-promise'
 
 export default [
     js.configs.recommended,
-    promise.configs.recommended,
     {
         files: [
             'src/**/*.js',
