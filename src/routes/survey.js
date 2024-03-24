@@ -1,5 +1,5 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlToggleSurveyDeleted } from '../sql/survey.js'
+import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlToggleSurveyDeleted, sqlToggleSurveyValid } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
@@ -22,7 +22,7 @@ export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} 
         valid_status = undefined
     }
 
-    const result = await sqlToggleSurveyDeleted(surveyId, valid_status)
+    const result = await sqlToggleSurveyValid(surveyId, valid_status)
     if (result === 'Not Found') {
         resData.status = STATUS_FAILED
         resData.msg = 'surveyId not exist'
