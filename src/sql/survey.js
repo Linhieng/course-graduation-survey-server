@@ -1,6 +1,28 @@
 import { useOneConn } from './index.js'
 
 /**
+ * 获取问卷信息，包括问卷详细信息。
+ *
+ * @param {TypeID} id
+ * @returns {Promise<'Not Found' | [SchemaQuestionnaire, SchemaQuestionnaireDetail]>}
+ */
+export const getSurveyById = (id) => useOneConn(async (conn) => {
+    let result, sql, values
+    sql = 'SELECT * FROM `questionnaire_detail` WHERE questionnaire_id = ? LIMIT 1;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    const surveyDetails = result[0]
+    sql = 'SELECT * FROM `questionnaire` WHERE id = ? LIMIT 1;'
+    result = await conn.execute(sql, values)
+    const surveys = result[0]
+    if (surveyDetails.length < 0 || surveys.length < 0) {
+        return 'Not Found'
+    }
+
+    return [surveys[0], surveyDetails[0]]
+})
+
+/**
  *
  * @param {ReqSurveyAche} survey
  * @returns

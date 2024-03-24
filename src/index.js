@@ -3,7 +3,7 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import { defaultHandler } from './utils/index.js'
 import { initConnPool } from './sql/index.js'
-import { getAllQuestionnaires, login, signup, isAuthExpired, createNewQuestionnaire, cacheQuestionnaire } from './routes/index.js'
+import { getAllQuestionnaires, login, signup, isAuthExpired, createNewQuestionnaire, cacheQuestionnaire, GetSurveyByID } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
 
@@ -27,6 +27,7 @@ app.use(cookieParser())
 app.get('/survey/get-all-surveys', getAllQuestionnaires)
 app.post('/survey/create', createNewQuestionnaire)
 app.post('/survey/cache', cacheQuestionnaire)
+app.get('/survey/id-:surveyId', GetSurveyByID)
 app.post('/user/signup', signup)
 app.post('/user/login', login)
 app.get('/user/isAuthExpired', midVerifyAuth, isAuthExpired)
