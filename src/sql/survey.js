@@ -79,6 +79,7 @@ export const getSurveyById = (id) => useOneConn(async (conn) => {
  */
 export const cacheSurvey = (survey) => useOneConn(async (conn) => {
     let result, sql, values
+    if (!survey.id) throw Error('id 为 空')
 
     sql = 'UPDATE `questionnaire`  SET title = ?, comment = ? WHERE id = ?;'
     values = [survey.title, survey.comment, survey.id]
