@@ -3,7 +3,19 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import { defaultHandler } from './utils/index.js'
 import { initConnPool } from './sql/index.js'
-import { getAllQuestionnaires, login, signup, isAuthExpired, createNewQuestionnaire, cacheQuestionnaire, GetSurveyByID, answerGetSurveyByID, toggleSurveyDelete, toggleSurveyValid, answerAddOne } from './routes/index.js'
+import {
+    getAllQuestionnaires,
+    login,
+    signup,
+    isAuthExpired,
+    createNewQuestionnaire,
+    cacheQuestionnaire,
+    GetSurveyByID,
+    answerGetSurveyByID,
+    toggleSurveyDelete,
+    toggleSurveyValid,
+    answerAddOne,
+} from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
 
