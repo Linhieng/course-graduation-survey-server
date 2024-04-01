@@ -15,6 +15,7 @@ import {
     toggleSurveyDelete,
     toggleSurveyValid,
     answerAddOne,
+    statData,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
@@ -52,6 +53,7 @@ app.post('/user/login', login)
 app.get('/user/isAuthExpired', midVerifyAuth, isAuthExpired)
 app.get('/answer/:surveyId', answerGetSurveyByID)
 app.post('/answer/:surveyId', answerAddOne)
+app.get('/stat/:surveyId', statData)
 
 app.use(defaultHandler)
 

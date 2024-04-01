@@ -1,6 +1,39 @@
 import { useOneConn } from './index.js'
 
 /**
+ * 返回一份问卷，同时携带该问卷收集到的所有回答
+ *
+ * @param {number} surveyId
+ * @returns
+ */
+export const getStatData = (surveyId) => useOneConn(async (conn) => {
+    let result, sql,
+        values = [surveyId]
+
+    sql = 'SELECT * ' +
+        'FROM questionnaire q ' +
+        'INNER JOIN questionnaire_detail qd ON q.id = qd.questionnaire_id ' +
+        'WHERE q.id = ? LIMIT 1'
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+    const surveyData = result[0][0]
+
+    sql = 'SELECT * ' +
+        'FROM questionnaire_answer qa ' +
+        'INNER JOIN questionnaire_answer_detail qad ON qa.id = qad.answer_id ' +
+        'WHERE qa.questionnaire_id = ?; '
+    result = await conn.execute(sql, values)
+    const answersData = result[0] || []
+
+    return {
+        surveyData,
+        answersData,
+    }
+})
+
+/**
  * 新增一条问卷回答记录。
  *
  * @param {ReqSurveyAnswer} body
@@ -18,7 +51,7 @@ export const insertOneAnswer = (body, ip) => useOneConn(async (conn) => {
     const answerDetail = body.answerDetail
 
     sql = 'INSERT INTO `questionnaire_answer` (questionnaire_id, answer_user_id, spend_time, ip_from) ' +
-            'VALUE (?, ?, ?, ?);'
+        'VALUE (?, ?, ?, ?);'
     values = [survey_id, answer_user_id, spend_time, ip_from]
     result = await conn.execute(sql, values)
     const answerId = result[0].insertId

@@ -94,3 +94,14 @@ interface ResOneSurveyData {
     questions: Object
 }
 type ResOneSurvey = ResWrapper<ResOneSurveyData>
+
+/**
+ * 统计数据时响应的数据
+ */
+type AnswerData = SchemaQuestionnaireAnswer & SchemaQuestionnaireAnswerDetail
+type SurveyData = SchemaQuestionnaire & SchemaQuestionnaireDetail
+interface ResStatData {
+    surveyData: SurveyData
+    answersData: Array<AnswerData>
+}
+type ResStatData = ResWrapper<ResStatData>
