@@ -29,3 +29,15 @@ interface ReqSurveyAche {
 
     structure_json: Object
 }
+
+/**
+ * 用户填写问卷时的请求体
+ */
+interface ReqSurveyAnswer {
+    surveyId: TypeID
+    answerUserId: TypeID
+    /** 单位秒 */
+    spendTime: number
+    /** 问题回答的内容，数据库中仅保存，不解析 */
+    answerDetail: Object
+}

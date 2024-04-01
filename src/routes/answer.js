@@ -1,6 +1,26 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { getSurveyById } from '../sql/index.js'
+import { getSurveyById, insertOneAnswer } from '../sql/index.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
+
+/**
+ * 填写一份问卷
+ */
+export const answerAddOne = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = Number(req.params.surveyId)
+    if (!surveyId || Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        resData.msg = '请提供 surveyId'
+        res.status(400).send(resData)
+        return
+    }
+    const body = req.body
+    await insertOneAnswer(body, req.ip)
+    resData.msg = '你的回答已保存！'
+
+    res.send(resData)
+})
 
 /**
  * 用户填写问卷时，获取问卷信息。

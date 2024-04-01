@@ -1,6 +1,34 @@
 import { useOneConn } from './index.js'
 
 /**
+ * 新增一条问卷回答记录。
+ *
+ * @param {ReqSurveyAnswer} body
+ * @param {string} ip
+ * @returns
+ */
+export const insertOneAnswer = (body, ip) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    const survey_id = body.surveyId
+    // 1 表示匿名用户
+    const answer_user_id = body.answerUserId || 1
+    const spend_time = body.spendTime
+    const ip_from = ip
+    const answerDetail = body.answerDetail
+
+    sql = 'INSERT INTO `questionnaire_answer` (questionnaire_id, answer_user_id, spend_time, ip_from) ' +
+            'VALUE (?, ?, ?, ?);'
+    values = [survey_id, answer_user_id, spend_time, ip_from]
+    result = await conn.execute(sql, values)
+    const answerId = result[0].insertId
+
+    sql = 'INSERT INTO `questionnaire_answer_detail` (answer_id, structure_json) VALUE (?, ?);'
+    values = [answerId, answerDetail]
+    result = await conn.execute(sql, values)
+})
+
+/**
  * 切换问卷的 valid 状态
  *
  * @param {TypeID} id
