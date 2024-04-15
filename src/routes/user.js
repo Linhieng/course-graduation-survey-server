@@ -68,7 +68,7 @@ export const login = asyncHandler(async (req, res) => {
         resData.status = 'failed'
         resData.code = CODE_FAILED
         resData.msg = '账户不存在，请先注册'
-        res.status(200).send(resData)
+        res.status(400).send(resData)
         return
     }
 
@@ -77,7 +77,7 @@ export const login = asyncHandler(async (req, res) => {
         resData.status = 'failed'
         resData.code = CODE_FAILED
         resData.msg = '密码错误'
-        res.status(200).send(resData)
+        res.status(400).send(resData)
         return
     }
 
