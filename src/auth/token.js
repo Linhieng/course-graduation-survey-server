@@ -16,6 +16,7 @@ export function signAuth(res, userId, username) {
     res.setHeader('x-token', token)
     res.setHeader('x-userID', userId)
     res.setHeader('x-username', username)
+    return token
 }
 
 /**
@@ -26,12 +27,17 @@ export function signAuth(res, userId, username) {
  * @param {ExpressNextFunction} next
  */
 export function midVerifyAuth(req, res, next) {
-    const token = req.headers['token']
+    const token = req.headers['authorization']
     const userId = req.headers['userid']
     const username = req.headers['username']
 
     const isError = jwtVerify(token, Number.parseInt(userId), username)
     if (!isError) {
+        req.tokenObj = {
+            token,
+            userId,
+            username,
+        }
         next()
     } else if (isError === 1) {
         res.status(401).send(getRespondData(

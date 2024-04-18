@@ -31,10 +31,11 @@ export const signup = asyncHandler(async (req, res) => {
     if (result === 'existed') {
         resData.status = 'failed'
         resData.code = 1
-        resData.msg = '已经存在该用户'
+        // 已经存在该用户
+        resData.msg = 'api.warn.had-user'
         res.status(200).send(resData)
     } else if (result.affectedRows === 1) {
-        resData.msg = '成功创建新用户'
+        resData.msg = 'api.success.create-user'
         /**
          * @type {ResLoginData}
          */
@@ -47,6 +48,10 @@ export const signup = asyncHandler(async (req, res) => {
     }
 })
 
+export const logout = asyncHandler(async (req, res) => {
+    const resData = getRespondData()
+    res.send(resData)
+})
 
 /**
  * 用户登录
@@ -58,6 +63,8 @@ export const login = asyncHandler(async (req, res) => {
     const reqData = req.body
     const resData = getRespondData()
     const username = reqData.username
+    // 前端应该加密后再将密码传递过来，前端加密的目的不是为了防止被截取，而是为了不让人知道原密码是什么
+    // 防止被截取，这一功能是由 https 提供的，不是加密提供的。
     const password = reqData.password
     const password_hash = encrypt(password)
 
@@ -67,8 +74,9 @@ export const login = asyncHandler(async (req, res) => {
     if (result.length < 1) {
         resData.status = 'failed'
         resData.code = CODE_FAILED
-        resData.msg = '账户不存在，请先注册'
-        res.status(400).send(resData)
+        // '账户不存在，请先注册'
+        resData.msg = 'api.response.not-found-account'
+        res.status(200).send(resData)
         return
     }
 
@@ -76,26 +84,29 @@ export const login = asyncHandler(async (req, res) => {
     if (password_hash !== correct_password) {
         resData.status = 'failed'
         resData.code = CODE_FAILED
-        resData.msg = '密码错误'
-        res.status(400).send(resData)
+        // 密码错误
+        resData.msg = 'api.error.password-wrong'
+        res.status(200).send(resData)
         return
     }
 
     // 生成 token 并分配到 cookie 中
     const userId = result[0].id
-    signAuth(res, userId, username)
+    const token  = signAuth(res, userId, username)
 
 
     /**
      * @type {ResLoginData}
      */
     const data = {
-        id: result[0].id,
+        userId,
+        token,
         username: result[0].username,
     }
     resData.status = STATUS_SUCCEED
     resData.code = CODE_SUCCEED
-    resData.msg = '登录成功'
+    // 登录成功
+    resData.msg = 'api.success.login-ok'
     resData.data = data
     res.status(200).send(resData)
 })

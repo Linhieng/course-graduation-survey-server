@@ -59,7 +59,9 @@ interface ResWrapper<T extends Object> {
  * 登录接口响应的数据
  */
 interface ResLoginData {
-    id: TypeID
+    userId: TypeID
+    /** jwt 生成的 token */
+    token: string
     username: string
 }
 type ResLogin = ResWrapper<ResLoginData>

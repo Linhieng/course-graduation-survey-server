@@ -16,6 +16,7 @@ import {
     toggleSurveyValid,
     answerAddOne,
     statData,
+    logout,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
@@ -42,18 +43,25 @@ app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-
 // 解析 cookie
 app.use(cookieParser())
 
-app.get('/survey/get-all-surveys', getAllQuestionnaires)
-app.post('/survey/create', createNewQuestionnaire)
-app.post('/survey/cache', cacheQuestionnaire)
+const mockDelay = (req, res, next) => {
+    setTimeout(next, 1000)
+}
+
+app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
+app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
+app.post('/api/user/login', mockDelay, login)
+app.post('/api/user/logout', mockDelay, midVerifyAuth, logout)
+app.get('/api/user/isAuthExpired', midVerifyAuth, midVerifyAuth, isAuthExpired)
+app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
+app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
+app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
+app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
+
+
 app.get('/survey/id-:surveyId', GetSurveyByID)
 app.post('/survey/toggle-del/:surveyId', toggleSurveyDelete)
 app.post('/survey/toggle-valid/:surveyId', toggleSurveyValid)
 app.post('/user/signup', signup)
-app.post('/api/user/login', login)
-// app.post('/api/user/logout', logout)
-app.get('/user/isAuthExpired', midVerifyAuth, isAuthExpired)
-app.get('/api/answer/:surveyId', answerGetSurveyByID)
-app.post('/api/answer/:surveyId', answerAddOne)
 app.get('/stat/:surveyId', statData)
 
 app.use(defaultHandler)

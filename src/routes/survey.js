@@ -145,7 +145,17 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
  */
 export const getAllQuestionnaires = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
-    const all_surveys = await getAllSurvey(2)
+    const userId = Number(req.params.userId) || req?.tokenObj?.userId
+
+    if (isNaN(userId)) {
+        resData.status = STATUS_FAILED
+        // '请提供用户 id'
+        resData.msg = 'api.error.not-user-id'
+        res.status(400).send(resData)
+        return
+    }
+
+    const all_surveys = await getAllSurvey(userId)
     resData.data = { all_surveys }
     res.send(resData)
 })

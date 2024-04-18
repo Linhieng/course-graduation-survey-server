@@ -33,7 +33,8 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
     const id = Number(req.params.surveyId)
     if (!id || Number.isNaN(id)) {
         resData.status = STATUS_FAILED
-        resData.msg = '问卷填写链接错误'
+        // 问卷填写链接错误
+        resData.msg = 'api.error.survey-link-wrong'
         res.status(404).send(resData)
         return
     }
@@ -41,7 +42,8 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
     const result = await getSurveyById(id)
     if (result === 'Not Found') {
         resData.status = STATUS_FAILED
-        resData.msg = '不存在此问卷'
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
         res.status(404).send(resData)
         return
     }
@@ -51,19 +53,22 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
 
     if (survey.is_deleted) {
         resData.status = STATUS_FAILED
-        resData.msg = '问卷已经被删除'
+        // 问卷已经被删除
+        resData.msg = 'api.error.survey-deleted'
         res.status(404).send(resData)
         return
     }
     if (!survey.is_valid) {
         resData.status = STATUS_FAILED
-        resData.msg = '问卷已经停止收集'
+        // 问卷已经停止收集
+        resData.msg = 'api.error.survey-stop'
         res.status(404).send(resData)
         return
     }
     if (!surveyDetail) {
         resData.status = STATUS_FAILED
-        resData.msg = '问卷内容不存在'
+        // 问卷内容不存在
+        resData.msg = 'api.error.survey-content-not-exist'
         res.status(404).send(resData)
         return
     }
