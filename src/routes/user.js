@@ -45,6 +45,10 @@ export const signup = asyncHandler(async (req, res) => {
         }
         resData.data = data
         res.status(200).send(resData)
+    } else {
+        // 这里还能有其他情况吗？
+        resData.msg = 'api.error.unknown'
+        res.status(500).send(resData)
     }
 })
 
