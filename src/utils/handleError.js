@@ -23,7 +23,7 @@ export const asyncHandler = requesthandler => (req, res, next) => {
  * @param {any} next
  */
 export function defaultHandler(err, req, res, _next) {
-    if (err.code === 'invalid_token') {
+    if (err.name === 'UnauthorizedError') {
         // 无效的 token
         const resData = getRespondData('failed', CODE_ERROR, 'api.error.token-invalid')
         res.status(403).send(resData)

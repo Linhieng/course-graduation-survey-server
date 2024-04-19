@@ -27,7 +27,9 @@ app.use(expressjwt({
 
 注意需要在最后处理 403 的情况：
 ```js
-if (err.code === 'invalid_token') {
+// 推荐使用 name 判断，因为 code 可能是 invalid_token 或者 revoked_token
+// if (err.code === 'invalid_token') {
+if (err.name === 'UnauthorizedError') {
     // 无效的 token
     const resData = getRespondData('failed', CODE_ERROR, 'api.error.token-invalid')
     res.status(403).send(resData)
