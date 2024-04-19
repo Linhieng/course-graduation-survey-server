@@ -43,6 +43,8 @@ app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 // 解析 cookie
 app.use(cookieParser())
+// 静态文件
+app.use('/static', express.static('src/public'))
 
 const mockDelay = (req, res, next) => {
     setTimeout(next, 1000)
