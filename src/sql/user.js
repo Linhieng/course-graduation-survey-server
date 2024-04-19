@@ -35,7 +35,7 @@ export const insertOne = (username, password_hash) => useOneConn(async (conn) =>
     values = [username, password_hash]
     result = await conn.execute(sql, values)
 
-    sql = 'INSERT INTO user_info (account_id, name, avatar_url) VALUE ( ?, ?, ? );'
+    sql = 'INSERT INTO user_info (account_id, name, avatar) VALUE ( ?, ?, ? );'
     values = [result[0].insertId, username, 'https://pic.imgdb.cn/item/662266030ea9cb1403a3b688.jpg']
     await conn.execute(sql, values)
 

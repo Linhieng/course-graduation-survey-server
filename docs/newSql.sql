@@ -4,7 +4,7 @@ CREATE TABLE user_info
     id                  INT AUTO_INCREMENT      NOT NULL COMMENT '主键，自增',
     `account_id`        INT                     NOT NULL COMMENT '外键，绑定 user id',
     `name`              VARCHAR(100) DEFAULT '' NOT NULL COMMENT '姓名',
-    `avatar_url`        VARCHAR(255) DEFAULT '' NOT NULL COMMENT '头像地址',
+    `avatar`        VARCHAR(255) DEFAULT '' NOT NULL COMMENT '头像地址',
     `email`             VARCHAR(255) DEFAULT '' NOT NULL COMMENT '邮箱',
     `job`               VARCHAR(100) DEFAULT '' NOT NULL COMMENT '职业，如 frontend',
     `job_name`          VARCHAR(255) DEFAULT '' NOT NULL COMMENT '职业名称，如前端艺术家',
@@ -26,7 +26,7 @@ CREATE TABLE user_info
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4;
 
-INSERT INTO user_info (account_id, name, avatar_url, email, job, job_name, organization, organization_name, location,
+INSERT INTO user_info (account_id, name, avatar, email, job, job_name, organization, organization_name, location,
                        location_name, introduction, personal_website, phone, certification, role)
     VALUE (
            1, '匿名', 'https://pic.imgdb.cn/item/6304358116f2c2beb15e9a9b.jpg',

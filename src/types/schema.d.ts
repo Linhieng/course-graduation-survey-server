@@ -149,7 +149,7 @@ interface SchemaQuestionnaireAnswerDetail extends SchemaBase {
 interface SchemaUserInfo extends SchemaBase {
     "account_id": TypeID
     "name": string
-    "avatar_url": string
+    "avatar": string
     "email": string
     "job": string
     "job_name": string
