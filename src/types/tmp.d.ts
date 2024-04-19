@@ -17,3 +17,19 @@ interface UserInfo {
     accountId: string;
     certification: number;
 }
+
+
+interface UserInfoCanModified {
+    name: string;
+    avatar: string;
+    email: string;
+    job: string;
+    job_name: string;
+    organization: string;
+    organization_name: string;
+    location: string;
+    location_name: string;
+    introduction: string;
+    personal_website: string;
+    phone: string;
+}

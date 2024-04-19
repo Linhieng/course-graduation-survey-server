@@ -1,9 +1,18 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
-import { insertOne, selectPasswordByUsername, sqlGetUserInfo } from '../sql/index.js'
+import { insertOne, selectPasswordByUsername, sqlGetUserInfo, sqlUpdateUserInfo } from '../sql/index.js'
 import { asyncHandler, encrypt, getRespondData } from '../utils/index.js'
 import { addRevokedToken, signAuth } from '../auth/index.js'
 import convertToCamelCase from '../utils/camelCase.js'
 
+
+/**
+ * 更新用户信息
+ */
+export const updateUserInfo = asyncHandler(async (/** @type {import('express').Request} */ req, res) => {
+    await sqlUpdateUserInfo(req.auth.userId, req.body)
+    const resData = getRespondData()
+    res.send(resData)
+})
 
 /**
  * 返回用户信息
