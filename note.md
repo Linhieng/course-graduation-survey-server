@@ -2,6 +2,12 @@
 
 根据开发过程，按时间顺序编写。上面新，下面旧。
 
+## express-jwt + jsonwebtoken
+
+参考 [这篇文章](https://www.cnblogs.com/zkqiang/p/11810203.html) 和 [这篇](https://blog.csdn.net/GreyCastle/article/details/120442437)
+
+我说为什么前端要添加 Bearer 和空格呢，原来是这样。
+
 ## JwtTokenStore 和 RedisTokenStore
 
 token 的原则是一次签发，永远有效……

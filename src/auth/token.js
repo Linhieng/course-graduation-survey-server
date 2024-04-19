@@ -43,13 +43,15 @@ export function midVerifyAuth(req, res, next) {
         res.status(401).send(getRespondData(
             'failed',
             CODE_FAILED,
-            '凭据已过期',
+            // 凭据已过期
+            'api.error.token-expired',
         ))
     } else {
         res.status(401).send(getRespondData(
             'failed',
             CODE_FAILED,
-            '未获得授权',
+            // 未获得授权
+            'api.error.not-authorized',
         ))
     }
 }

@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken'
  * @param {*} expiresIn 提供数字时，单位是秒。为了方便测试，默认是 10 分钟过期。
  * @returns
  */
-export function jwtSign(userId, username, expiresIn = 600) {
+export function jwtSign(userId, username, expiresIn = 6) {
 
     const token = jwt.sign({ userId, username }, JWT_SECRET, { expiresIn })
     return token
@@ -33,6 +33,7 @@ export function jwtVerify(token, userId, username) {
     try {
         /** @type {AuthObj} */
         const payload = jwt.verify(token, JWT_SECRET)
+        // TODO: 这里是我自作多情了吗？
         const isValid = userId === payload.userId && username === payload.username
         if (isValid) return 0
         return 2

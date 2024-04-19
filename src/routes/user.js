@@ -4,6 +4,19 @@ import { asyncHandler, encrypt, getRespondData } from '../utils/index.js'
 import { signAuth } from '../auth/index.js'
 
 /**
+ * 返回用户信息
+ * @return {{userId:number;username:string}}
+ */
+export const getUserInfo = asyncHandler(async (req, res) => {
+    const resData = getRespondData()
+    resData.data = {
+        userId: req.tokenObj.userId,
+        username: req.tokenObj.username,
+    }
+    res.send(resData)
+})
+
+/**
  * 能进入到这里，说明没有过期
  */
 export const isAuthExpired = asyncHandler(async (req, res) => {
@@ -103,9 +116,9 @@ export const login = asyncHandler(async (req, res) => {
      * @type {ResLoginData}
      */
     const data = {
-        userId,
+        // userId,
         token,
-        username: result[0].username,
+        // username: result[0].username,
     }
     resData.status = STATUS_SUCCEED
     resData.code = CODE_SUCCEED

@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { defaultHandler } from './utils/index.js'
+import { defaultHandler, getRespondData } from './utils/index.js'
 import { initConnPool } from './sql/index.js'
 import {
     getAllQuestionnaires,
@@ -18,9 +18,11 @@ import {
     statData,
     logout,
     publishSurvey,
+    getUserInfo,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
+import { CODE_ERROR } from './constants/response.js'
 
 const port = 3000
 const app = express()
@@ -50,24 +52,34 @@ const mockDelay = (req, res, next) => {
     setTimeout(next, 1000)
 }
 
-app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
-app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
-app.post('/api/user/signup', mockDelay, signup)
+// 用户
 app.post('/api/user/login', mockDelay, login)
+app.post('/api/user/signup', mockDelay, signup)
 app.post('/api/user/logout', mockDelay, midVerifyAuth, logout)
 app.get('/api/user/isAuthExpired', midVerifyAuth, midVerifyAuth, isAuthExpired)
-app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
-app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
+app.post('/api/user/info', mockDelay, midVerifyAuth, getUserInfo)
+
+// 问卷
+app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
+app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
 app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
 app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
 app.get('/api/survey/id-:surveyId', mockDelay, midVerifyAuth, GetSurveyByID)
 app.post('/api/survey/publish/:surveyId', mockDelay, midVerifyAuth, publishSurvey)
 
+// 回答
+app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
+app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 
 app.post('/survey/toggle-del/:surveyId', toggleSurveyDelete)
 app.post('/survey/toggle-valid/:surveyId', toggleSurveyValid)
 
 app.get('/stat/:surveyId', statData)
+
+app.all('*', (req, res) => {
+    const resData = getRespondData('failed', CODE_ERROR, 'api.error.url.404')
+    res.status(404).send(resData)
+})
 
 app.use(defaultHandler)
 
