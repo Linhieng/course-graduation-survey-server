@@ -9,10 +9,26 @@ import { addRevokedToken, signAuth } from '../auth/index.js'
  */
 export const getUserInfo = asyncHandler(async (req, res) => {
     const resData = getRespondData()
-    resData.data = {
-        userId: req.tokenObj.userId,
-        username: req.tokenObj.username,
+    /** @type {UserInfo} */
+    const userInfo = {
+        name: '某某某',
+        avatar: 'http://localhost:3000/static/img/a1.png',
+        email: 'xx@qq.com',
+        job: 'frontend',
+        jobName: '前端艺术家',
+        organization: 'Frontend',
+        organizationName: '前端',
+        location: 'xx',
+        locationName: '广东',
+        introduction: '咕咕',
+        personalWebsite: 'https://oonoo.cn',
+        phone: '150****0000',
+        registrationDate: '2023-05-10 12:10:00',
+        accountId: '15012312300',
+        certification: 1,
+        role: 'user',
     }
+    resData.data = userInfo
     res.send(resData)
 })
 
