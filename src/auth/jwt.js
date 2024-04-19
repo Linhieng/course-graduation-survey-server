@@ -6,10 +6,10 @@ import jwt from 'jsonwebtoken'
  *
  * @param {TypeID} userId
  * @param {string} username
- * @param {*} expiresIn 提供数字时，单位是秒。为了方便测试，默认是 10 分钟过期。
+ * @param {*} expiresIn 提供数字时，单位是秒。为了方便测试，默认是 1 小时过期。
  * @returns
  */
-export function jwtSign(userId, username, expiresIn = 600) {
+export function jwtSign(userId, username, expiresIn = 3600) {
 
     const token = jwt.sign({ userId, username }, JWT_SECRET, { expiresIn })
     return token
