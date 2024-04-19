@@ -41,3 +41,19 @@ export const insertOne = (username, password_hash) => useOneConn(async (conn) =>
 
     return result[0]
 })
+
+/**
+ *
+ * @param {number} userId
+ * @returns {Promise<'not' | SchemaUserInfo>} 不存在则返回 'not'
+ */
+export const sqlGetUserInfo = (userId) => useOneConn(async (conn) => {
+    let sql = 'SELECT * FROM `user_info` WHERE `account_id` = ? LIMIT 1'
+    let values = [userId]
+    let result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'not'
+    }
+
+    return result[0][0]
+})

@@ -1,34 +1,26 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
-import { insertOne, selectPasswordByUsername } from '../sql/index.js'
+import { insertOne, selectPasswordByUsername, sqlGetUserInfo } from '../sql/index.js'
 import { asyncHandler, encrypt, getRespondData } from '../utils/index.js'
 import { addRevokedToken, signAuth } from '../auth/index.js'
+import convertToCamelCase from '../utils/camelCase.js'
+
 
 /**
  * 返回用户信息
  * @return {{userId:number;username:string}}
  */
-export const getUserInfo = asyncHandler(async (req, res) => {
+export const getUserInfo = asyncHandler(async (/** @type {import('express').Request} */ req, res) => {
     const resData = getRespondData()
-    /** @type {UserInfo} */
-    const userInfo = {
-        name: '某某某',
-        avatar: 'http://localhost:3000/static/img/a1.png',
-        email: 'xx@qq.com',
-        job: 'frontend',
-        jobName: '前端艺术家',
-        organization: 'Frontend',
-        organizationName: '前端',
-        location: 'xx',
-        locationName: '广东',
-        introduction: '咕咕',
-        personalWebsite: 'https://oonoo.cn',
-        phone: '150****0000',
-        registrationDate: '2023-05-10 12:10:00',
-        accountId: '15012312300',
-        certification: 1,
-        role: 'user',
+    const info = await sqlGetUserInfo(req.auth.userId)
+
+    if (info === 'not') {
+        resData.status = 'failed'
+        resData.msg = 'api.error.not-user-info'
+        res.status(400).send(resData)
+        return
     }
-    resData.data = userInfo
+    info.role = info.role === 1 ? 'user' : 'admin'
+    resData.data = convertToCamelCase(info)
     res.send(resData)
 })
 

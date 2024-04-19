@@ -63,7 +63,7 @@ declare enum SchemaCommonBoolean {
 /**
  * 用户信息表
  */
-interface SchemaUser extends SchemaBase{
+interface SchemaUser extends SchemaBase {
     /** - 用户名，唯一 */
     username: string
     /** - 邮箱，可选 */
@@ -143,4 +143,26 @@ interface SchemaQuestionnaireAnswerDetail extends SchemaBase {
     answer_id: TypeID
     /** - 具体内容，格式为 json */
     structure_json: Object
+}
+
+
+interface SchemaUserInfo extends SchemaBase {
+    "account_id": TypeID
+    "name": string
+    "avatar_url": string
+    "email": string
+    "job": string
+    "job_name": string
+    "organization": string
+    "organization_name": string
+    "location": string
+    "location_name": string
+    "introduction": string
+    "personal_website": string
+    "phone": string
+    /** 是否已认证身份 */
+    "certification": 0 | 1
+    /** 0 表示 admin，1 表示 user */
+    "role": 1 | 0
+    "registration_date": Date
 }

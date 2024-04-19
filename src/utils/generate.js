@@ -10,7 +10,7 @@ import { STATUS_SUCCEED } from '../constants/index.js'
  * @param {T extends Object} data
  * @returns {ResWrapper<T>}
  */
-export function getRespondData(status = STATUS_SUCCEED, code=0, msg='无', data={}) {
+export function getRespondData(status = STATUS_SUCCEED, code = 0, msg = '无', data = {}) {
     const resData = { status, code, msg, data }
     return resData
 }
