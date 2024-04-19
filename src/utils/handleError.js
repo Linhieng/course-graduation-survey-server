@@ -30,6 +30,12 @@ export function defaultHandler(err, req, res, _next) {
         return
     }
 
+    // 自定义错误
+    if (err instanceof SqlError) {
+        const resData = getRespondData('failed', CODE_ERROR, err.msg)
+        res.status(err.status).send(resData)
+    }
+
     console.error(err)
     // api.error.default.unknown
     const resData = getRespondData('failed', CODE_UNKNOWN_ERROR, 'api.error.default.unknown')
@@ -38,4 +44,27 @@ export function defaultHandler(err, req, res, _next) {
         resData.msg = err.__explain
     }
     res.status(500).send(resData)
+}
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+export class SqlError extends Error {
+    constructor(status, msg) {
+        super('sql 错误: ' + msg)
+        this.status = status
+        this.msg = msg
+    }
 }

@@ -20,6 +20,7 @@ import {
     publishSurvey,
     getUserInfo,
     updateUserInfo,
+    modifyPassword,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
@@ -65,6 +66,8 @@ app.post('/api/user/logout', mockDelay, logout)
 app.get('/api/user/isAuthExpired', isAuthExpired)
 app.post('/api/user/info', mockDelay, getUserInfo)
 app.post('/api/user/update-info', mockDelay, updateUserInfo)
+app.post('/api/user/modify-password', mockDelay, modifyPassword)
+
 
 // 问卷
 app.post('/api/survey/create', mockDelay, createNewQuestionnaire)

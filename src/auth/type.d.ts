@@ -1,0 +1,2 @@
+interface ReqAuth extends jwtAuth {
+}

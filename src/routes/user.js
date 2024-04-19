@@ -1,9 +1,23 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
-import { insertOne, selectPasswordByUsername, sqlGetUserInfo, sqlUpdateUserInfo } from '../sql/index.js'
+import { insertOne, selectPasswordByUsername, sqlCHangePassword, sqlGetUserInfo, sqlUpdateUserInfo } from '../sql/index.js'
 import { asyncHandler, encrypt, getRespondData } from '../utils/index.js'
 import { addRevokedToken, signAuth } from '../auth/index.js'
 import convertToCamelCase from '../utils/camelCase.js'
 
+
+/**
+ * 修改密码
+ */
+export const modifyPassword = asyncHandler(async (/** @type {import('express').Request} */ req, res) => {
+    const oldPassword_hash = encrypt(req.body.oldPassword)
+    const newPassword_hash = encrypt(req.body.newPassword)
+    await sqlCHangePassword(req.auth, {
+        oldPassword_hash,
+        newPassword_hash,
+    })
+    const resData = getRespondData()
+    res.send(resData)
+})
 
 /**
  * 更新用户信息

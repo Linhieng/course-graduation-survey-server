@@ -1,3 +1,4 @@
+import { SqlError } from '../utils/index.js'
 import { useOneConn } from './index.js'
 
 /**
@@ -92,4 +93,30 @@ export const sqlUpdateUserInfo = (userId, userInfo) => useOneConn(async (conn) =
     sql = 'update user_info set name = ?, avatar = ?, email = ?, job = ?, job_name = ?, organization = ?, organization_name = ?, location = ?, location_name = ?, introduction = ?, personal_website = ?, phone = ? where account_id = ?;'
     values = [info.name, info.avatar, info.email, info.job, info.job_name, info.organization, info.organization_name, info.location, info.location_name, info.introduction, info.personal_website, info.phone, userId]
     await conn.execute(sql, values)
+})
+
+/**
+ *
+ * @param {ReqAuth} auth
+ * @param {ChangePasswordData} data
+ * @returns
+ */
+export const sqlCHangePassword = (auth, data) => useOneConn(async (conn) => {
+    let sql, values, result
+
+    sql = 'select password_hash from user where id = ?;'
+    values = [auth.userId]
+    result = await conn.execute(sql, values)
+
+    if (result[0].length < 1) throw new SqlError(400, 'api.error.password')
+
+    if (result[0][0].password_hash !== data.oldPassword_hash) {
+        throw new SqlError(200, 'api.error.password')
+    }
+
+    sql = 'update user set password_hash = ? where id =?;'
+    values = [data.newPassword_hash, auth.userId]
+    result = await conn.execute(sql, values)
+
+
 })
