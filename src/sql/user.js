@@ -16,11 +16,11 @@ export const selectPasswordByUsername = (username) => useOneConn(async (conn) =>
 })
 
 /**
- * 添加一个普通用户
+ * 添加一个普通用户，同时创建对应信息表
  *
  * @param {string} username - 用户名
  * @param {string} password_hash - 加密后的密码
- * @returns {Promise<'existed' | MysqlResultSetHeader>} 如果用户名已存在，则返回 false
+ * @returns {Promise<'existed' | MysqlResultSetHeader>} 如果用户名已存在，则返回 'existed'
  */
 export const insertOne = (username, password_hash) => useOneConn(async (conn) => {
 
@@ -34,5 +34,10 @@ export const insertOne = (username, password_hash) => useOneConn(async (conn) =>
     sql = 'INSERT INTO `user`(`username`, `password_hash`) VALUE (?, ?)'
     values = [username, password_hash]
     result = await conn.execute(sql, values)
+
+    sql = 'INSERT INTO user_info (account_id, name, avatar_url) VALUE ( ?, ?, ? );'
+    values = [result[0].insertId, username, 'https://pic.imgdb.cn/item/662266030ea9cb1403a3b688.jpg']
+    await conn.execute(sql, values)
+
     return result[0]
 })
