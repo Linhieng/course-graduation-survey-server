@@ -17,6 +17,7 @@ import {
     answerAddOne,
     statData,
     logout,
+    publishSurvey,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
@@ -58,6 +59,7 @@ app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
 app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
 app.get('/api/survey/id-:surveyId', mockDelay, midVerifyAuth, GetSurveyByID)
+app.post('/api/survey/publish/:surveyId', mockDelay, midVerifyAuth, publishSurvey)
 
 
 app.post('/survey/toggle-del/:surveyId', toggleSurveyDelete)

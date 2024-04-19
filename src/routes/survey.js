@@ -1,6 +1,30 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlToggleSurveyDeleted, sqlToggleSurveyValid } from '../sql/survey.js'
+import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
+
+export const publishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = Number(req.params.surveyId)
+    if (Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        // 请提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
+        res.status(400).send(resData)
+        return
+    }
+
+    const result = await sqlPublishSurvey(surveyId)
+    if (result === 'Not Found') {
+        resData.status = STATUS_FAILED
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
+        res.status(400).send(resData)
+        return
+    }
+
+    res.send(resData)
+})
 
 export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
@@ -8,7 +32,8 @@ export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} 
     const surveyId = req.params.surveyId
     if (!surveyId || Number.isNaN(surveyId)) {
         resData.status = STATUS_FAILED
-        resData.msg = 'surveyId wrong'
+        // 请提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
         res.status(400).send(resData)
         return
     }
@@ -25,7 +50,8 @@ export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} 
     const result = await sqlToggleSurveyValid(surveyId, valid_status)
     if (result === 'Not Found') {
         resData.status = STATUS_FAILED
-        resData.msg = 'surveyId not exist'
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
         res.status(400).send(resData)
         return
     }
@@ -38,7 +64,8 @@ export const toggleSurveyDelete = asyncHandler(async (/** @type {ExpressRequest}
     const surveyId = req.params.surveyId
     if (!surveyId || Number.isNaN(surveyId)) {
         resData.status = STATUS_FAILED
-        resData.msg = 'surveyId wrong'
+        // 请提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
         res.status(400).send(resData)
         return
     }
@@ -55,7 +82,8 @@ export const toggleSurveyDelete = asyncHandler(async (/** @type {ExpressRequest}
     const result = await sqlToggleSurveyDeleted(surveyId, deleted_status)
     if (result === 'Not Found') {
         resData.status = STATUS_FAILED
-        resData.msg = 'surveyId not exist'
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
         res.status(400).send(resData)
         return
     }

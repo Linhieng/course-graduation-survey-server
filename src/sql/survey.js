@@ -61,6 +61,31 @@ export const insertOneAnswer = (body, ip) => useOneConn(async (conn) => {
     result = await conn.execute(sql, values)
 })
 
+
+/**
+ * 发布一份问卷。变更 is_draft 为 0，变更 is_valid 为 1
+ *
+ * @param {TypeID} id
+ * @return {Promise<'Not Found' | 'ok'>}
+ */
+export const sqlPublishSurvey = (id) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'SELECT is_valid FROM questionnaire WHERE id = ?;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+
+    sql = 'UPDATE questionnaire SET is_draft = ?, is_valid = ? WHERE id = ?;'
+    values = [0, 1, id]
+    await conn.execute(sql, values)
+
+    return 'ok'
+})
+
+
 /**
  * 切换问卷的 valid 状态
  *
