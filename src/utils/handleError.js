@@ -23,8 +23,16 @@ export const asyncHandler = requesthandler => (req, res, next) => {
  * @param {any} next
  */
 export function defaultHandler(err, req, res, _next) {
+    if (err.code === 'invalid_token') {
+        // 无效的 token
+        const resData = getRespondData('failed', CODE_ERROR, 'api.error.token-invalid')
+        res.status(403).send(resData)
+        return
+    }
+
     console.error(err)
-    const resData = getRespondData('failed', CODE_UNKNOWN_ERROR, '未知错误！请联系网站负责人。')
+    // api.error.default.unknown
+    const resData = getRespondData('failed', CODE_UNKNOWN_ERROR, 'api.error.default.unknown')
     if (err.__explain) {
         resData.code = CODE_ERROR
         resData.msg = err.__explain

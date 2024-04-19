@@ -1,7 +1,7 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
 import { insertOne, selectPasswordByUsername } from '../sql/index.js'
 import { asyncHandler, encrypt, getRespondData } from '../utils/index.js'
-import { signAuth } from '../auth/index.js'
+import { addRevokedToken, signAuth } from '../auth/index.js'
 
 /**
  * 返回用户信息
@@ -65,8 +65,9 @@ export const signup = asyncHandler(async (req, res) => {
     }
 })
 
-export const logout = asyncHandler(async (req, res) => {
+export const logout = asyncHandler(async (/** @type {import("express").Request} */ req, res) => {
     const resData = getRespondData()
+    addRevokedToken(req.auth)
     res.send(resData)
 })
 
@@ -109,7 +110,7 @@ export const login = asyncHandler(async (req, res) => {
 
     // 生成 token 并分配到 cookie 中
     const userId = result[0].id
-    const token  = signAuth(res, userId, username)
+    const token = signAuth(res, userId, username)
 
 
     /**

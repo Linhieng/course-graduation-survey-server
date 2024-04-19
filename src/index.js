@@ -23,6 +23,7 @@ import {
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
 import { CODE_ERROR } from './constants/response.js'
+import { useExpressJwt } from './auth/index.js'
 
 const port = 3000
 const app = express()
@@ -47,6 +48,10 @@ app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-
 app.use(cookieParser())
 // 静态文件
 app.use('/static', express.static('src/public'))
+// 使用 jwt token 校验
+useExpressJwt(app)
+
+
 
 const mockDelay = (req, res, next) => {
     setTimeout(next, 1000)
@@ -55,9 +60,9 @@ const mockDelay = (req, res, next) => {
 // 用户
 app.post('/api/user/login', mockDelay, login)
 app.post('/api/user/signup', mockDelay, signup)
-app.post('/api/user/logout', mockDelay, midVerifyAuth, logout)
-app.get('/api/user/isAuthExpired', midVerifyAuth, midVerifyAuth, isAuthExpired)
-app.post('/api/user/info', mockDelay, midVerifyAuth, getUserInfo)
+app.post('/api/user/logout', mockDelay, logout)
+app.get('/api/user/isAuthExpired', isAuthExpired)
+app.post('/api/user/info', mockDelay, getUserInfo)
 
 // 问卷
 app.post('/api/survey/create', mockDelay, createNewQuestionnaire)

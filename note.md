@@ -8,6 +8,35 @@
 
 我说为什么前端要添加 Bearer 和空格呢，原来是这样。
 
+```js
+import {expressjwt} from 'express-jwt'
+app.use(expressjwt({
+    algorithms: ['HS256'],
+    secret: JWT_SECRET,  // 签名的密钥 或 PublicKey
+}).unless({
+    path: [ // 指定路径不经过 Token 解析
+        '/api/user/login',
+        '/api/user/signup',
+    ],
+}))
+```
+
+前端默认需要将 token 放在 Authorization 头中，并且以 Bearer + 空格开头。
+
+解析后，他会将结果填充到 `req.auth` 中（以前是 user）
+
+注意需要在最后处理 403 的情况：
+```js
+if (err.code === 'invalid_token') {
+    // 无效的 token
+    const resData = getRespondData('failed', CODE_ERROR, 'api.error.token-invalid')
+    res.status(403).send(resData)
+    return
+}
+```
+
+express-jwt 还可以通过 isRevoked 提供一个回调，用于校验 token 是非无效。
+
 ## JwtTokenStore 和 RedisTokenStore
 
 token 的原则是一次签发，永远有效……

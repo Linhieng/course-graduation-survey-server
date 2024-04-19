@@ -47,6 +47,9 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": "always"
     },
+    "[javascript]": {
+        "editor.formatOnSave": true
+    },
     "cSpell.words": [
         "linhieng",
         "userid"
