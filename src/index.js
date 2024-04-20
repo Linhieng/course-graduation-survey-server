@@ -21,11 +21,13 @@ import {
     getUserInfo,
     updateUserInfo,
     modifyPassword,
+    uploadFile,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
 import { CODE_ERROR } from './constants/response.js'
 import { useExpressJwt } from './auth/index.js'
+import multer from 'multer'
 
 const port = 3000
 const app = express()
@@ -49,7 +51,7 @@ app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-
 // 解析 cookie
 app.use(cookieParser())
 // 静态文件
-app.use('/static', express.static('src/public'))
+app.use('/assets/public', express.static('src/public'))
 // 使用 jwt token 校验
 useExpressJwt(app)
 
@@ -58,6 +60,9 @@ useExpressJwt(app)
 const mockDelay = (req, res, next) => {
     setTimeout(next, 1000)
 }
+
+const upload = multer()
+app.post('/api/other/upload-public', upload.single('file'), mockDelay, uploadFile)
 
 // 用户
 app.post('/api/user/login', mockDelay, login)
