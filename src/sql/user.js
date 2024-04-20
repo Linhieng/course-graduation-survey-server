@@ -3,7 +3,7 @@ import { useOneConn } from './index.js'
 
 export const sqlGetUserLog = (userId, startPage = 0, pageSize = 8) => useOneConn(async (conn) => {
     let sql, values, result
-    sql = 'select * from user_action_log where user_id = ? LIMIT ? , ? ;'
+    sql = 'select * from user_action_log where user_id = ? ORDER BY updated_at DESC LIMIT ? , ? ;'
     // 这里需要字符串，不能是数字。（有点奇葩呀）
     values = [userId, '' + startPage, '' + pageSize]
     result = await conn.execute(sql, values)
