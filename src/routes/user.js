@@ -1,9 +1,18 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
-import { insertOne, selectPasswordByUsername, sqlCHangePassword, sqlGetUserInfo, sqlUpdateUserInfo } from '../sql/index.js'
+import { insertOne, selectPasswordByUsername, sqlCHangePassword, sqlGetUserInfo, sqlGetUserLog, sqlUpdateUserInfo } from '../sql/index.js'
 import { userActionLog, asyncHandler, encrypt, getRespondData } from '../utils/index.js'
 import { addRevokedToken, signAuth } from '../auth/index.js'
 import convertToCamelCase from '../utils/camelCase.js'
 
+export const getActionLog = asyncHandler(async (/** @type {import('express').Request} */ req, res) => {
+    let { startPage, pageSize } = req.query
+    startPage = isNaN(Number(startPage)) ? undefined : Number(startPage)
+    pageSize = isNaN(Number(pageSize)) ? undefined : Number(pageSize)
+    const data = await sqlGetUserLog(req.auth.userId, startPage, pageSize)
+    const resData = getRespondData()
+    resData.data = data
+    res.send(resData)
+})
 
 /**
  * 修改密码
@@ -16,7 +25,7 @@ export const modifyPassword = asyncHandler(async (/** @type {import('express').R
         newPassword_hash,
     })
 
-    userActionLog(req, '修改密码')
+    userActionLog(req.auth.userId, req, '修改密码')
 
     const resData = getRespondData()
     res.send(resData)
@@ -101,7 +110,7 @@ export const signup = asyncHandler(async (req, res) => {
 
 export const logout = asyncHandler(async (/** @type {import("express").Request} */ req, res) => {
     // 记录日志，无需处理报错
-    userActionLog(req, '退出登录')
+    userActionLog(req.auth.userId, req, '退出登录')
 
     const resData = getRespondData()
     addRevokedToken(req.auth)
@@ -150,7 +159,7 @@ export const login = asyncHandler(async (req, res) => {
     const token = signAuth(res, userId, username)
 
     // 记录日志，无需处理报错
-    userActionLog(req, '登录')
+    userActionLog(userId, req, '登录')
 
     /**
      * @type {ResLoginData}

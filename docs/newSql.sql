@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS user_login_log;
-CREATE TABLE user_login_log
+DROP TABLE IF EXISTS user_action_log;
+CREATE TABLE user_action_log
 (
     id         INT AUTO_INCREMENT      NOT NULL COMMENT '主键，自增',
     user_id    INT                     NOT NULL COMMENT '外键，绑定 user id',
@@ -13,7 +13,7 @@ CREATE TABLE user_login_log
     updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间，自动赋值',
     PRIMARY KEY (id),                          -- 主键添加在后面，更美观
     FOREIGN KEY (user_id) REFERENCES user (id) -- 外键，绑定 user id
-) COMMENT = '用户登录日志表'
+) COMMENT = '用户行为日志表'
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4;
 

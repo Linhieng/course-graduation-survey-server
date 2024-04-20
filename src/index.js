@@ -22,6 +22,7 @@ import {
     updateUserInfo,
     modifyPassword,
     uploadFile,
+    getActionLog,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
@@ -72,6 +73,7 @@ app.get('/api/user/isAuthExpired', isAuthExpired)
 app.post('/api/user/info', mockDelay, getUserInfo)
 app.post('/api/user/update-info', mockDelay, updateUserInfo)
 app.post('/api/user/modify-password', mockDelay, modifyPassword)
+app.post('/api/user/action-log', mockDelay, getActionLog)
 
 
 // 问卷

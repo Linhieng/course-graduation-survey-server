@@ -2,6 +2,13 @@
 
 根据开发过程，按时间顺序编写。上面新，下面旧。
 
+## mysql2 的kg
+
+```js
+sql = 'select * from user_action_log where user_id = ? LIMIT ? , ? ;'
+```
+上面的 LIMIT 需要是一个字符串，不能是一个数字，不然会提示 Incorrect arguments to mysqld_stmt_execute。
+
 ## express-jwt + jsonwebtoken
 
 参考 [这篇文章](https://www.cnblogs.com/zkqiang/p/11810203.html) 和 [这篇](https://blog.csdn.net/GreyCastle/article/details/120442437)

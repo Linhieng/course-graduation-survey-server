@@ -1,8 +1,17 @@
 import { SqlError } from '../utils/index.js'
 import { useOneConn } from './index.js'
 
+export const sqlGetUserLog = (userId, startPage = 0, pageSize = 8) => useOneConn(async (conn) => {
+    let sql, values, result
+    sql = 'select * from user_action_log where user_id = ? LIMIT ? , ? ;'
+    // 这里需要字符串，不能是数字。（有点奇葩呀）
+    values = [userId, '' + startPage, '' + pageSize]
+    result = await conn.execute(sql, values)
+    return result[0]
+})
+
 /**
- *
+ * 记录用户行为日志
  * @param {number} userId
  * @param {string} ip
  * @param {string} userAgent
@@ -14,7 +23,7 @@ import { useOneConn } from './index.js'
  */
 export const sqlAddLoginLog = (userId, ip, userAgent, info, origin = '', referer = '', platform = '') => useOneConn(async (conn) => {
     let sql, values
-    sql = 'INSERT INTO user_login_log(user_id, ip, user_agent, info, origin, referer, platform) value (?, ?, ?, ?, ?, ?, ?);'
+    sql = 'INSERT INTO user_action_log(user_id, ip, user_agent, info, origin, referer, platform) value (?, ?, ?, ?, ?, ?, ?);'
     values = [userId, ip, userAgent, info, origin, referer, platform]
 
     await conn.execute(sql, values)
