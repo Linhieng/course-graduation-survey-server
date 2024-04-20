@@ -2,6 +2,25 @@ import { SqlError } from '../utils/index.js'
 import { useOneConn } from './index.js'
 
 /**
+ *
+ * @param {number} userId
+ * @param {string} ip
+ * @param {string} userAgent
+ * @param {string} info
+ * @param {string} origin
+ * @param {string} referer
+ * @param {string} platform
+ * @returns
+ */
+export const sqlAddLoginLog = (userId, ip, userAgent, info, origin = '', referer = '', platform = '') => useOneConn(async (conn) => {
+    let sql, values
+    sql = 'INSERT INTO user_login_log(user_id, ip, user_agent, info, origin, referer, platform) value (?, ?, ?, ?, ?, ?, ?);'
+    values = [userId, ip, userAgent, info, origin, referer, platform]
+
+    await conn.execute(sql, values)
+})
+
+/**
  * 根据 username 在 user 表中进行查找对于的密码
  *
  * @param {string} username
