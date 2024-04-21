@@ -39,6 +39,10 @@ export function useExpressJwt(app) {
         path: [ // 指定路径不经过 Token 解析
             '/api/user/login',
             '/api/user/signup',
+            {
+                url: /^\/api\/answer\/.*/,
+                methods: ['GET', 'POST'],
+            },
         ],
     }))
 }

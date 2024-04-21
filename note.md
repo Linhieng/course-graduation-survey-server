@@ -2,7 +2,7 @@
 
 根据开发过程，按时间顺序编写。上面新，下面旧。
 
-## mysql2 的kg
+## mysql2 的坑
 
 ```js
 sql = 'select * from user_action_log where user_id = ? LIMIT ? , ? ;'
@@ -45,6 +45,19 @@ if (err.name === 'UnauthorizedError') {
 ```
 
 express-jwt 还可以通过 isRevoked 提供一个回调，用于校验 token 是非无效。
+
+
+放行时，可以提供对象和正则，来定制更细节的规则：
+```js
+.unless({path: [ // 指定路径不经过 Token 解析
+    '/api/user/login',
+    '/api/user/signup',
+    {
+        url: /^\/api\/answer\/.*/,
+        methods: ['GET', 'POST'],
+    },
+]})
+```
 
 ## JwtTokenStore 和 RedisTokenStore
 
