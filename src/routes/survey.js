@@ -1,5 +1,5 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { createNewSurvey, sqlGetAllSurvey, sqlGetSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat, sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey } from '../sql/survey.js'
+import { sqlGetAllSurvey, sqlGetSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat, sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 /**
@@ -359,17 +359,17 @@ export const toggleSurveyDelete = asyncHandler(async (/** @type {ExpressRequest}
 })
 
 
-/**
- * 用户点击创建一份问卷
- *
- */
-export const createNewQuestionnaire = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
-    const resData = getRespondData()
+// /**
+//  * 用户点击创建一份问卷
+//  *
+//  */
+// export const createNewQuestionnaire = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+//     const resData = getRespondData()
 
-    // 从数据库中新建一个问卷
-    const surveyId = await createNewSurvey('未命名问卷')
+//     // 从数据库中新建一个问卷
+//     const surveyId = await createNewSurvey('未命名问卷')
 
-    // 将对应问卷信息 id 返回
-    resData.data = { surveyId }
-    res.send(resData)
-})
+//     // 将对应问卷信息 id 返回
+//     resData.data = { surveyId }
+//     res.send(resData)
+// })

@@ -91,9 +91,6 @@ app.post('/api/survey/stop/:surveyId', mockDelay, stopSurvey)
 app.post('/api/survey/del/:surveyId', mockDelay, delSurvey)
 app.post('/api/survey/recover/:surveyId', mockDelay, recoverSurvey)
 
-// app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
-// app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
-// app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
 
 // 回答
 app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
