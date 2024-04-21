@@ -158,21 +158,16 @@ export const getSurveyById = (id) => useOneConn(async (conn) => {
     return [surveys[0], surveyDetails[0]]
 })
 
-/**
- *
- * @param {ReqSurveyAche} survey
- * @returns
- */
-export const sqlCacheSurvey = (survey) => useOneConn(async (conn) => {
+/** 更新已有问卷 */
+export const sqlUpdateSurvey = (surveyId, title, comment, structure_json) => useOneConn(async (conn) => {
     let result, sql, values
-    if (!survey.id) throw Error('id 为 空')
 
     sql = 'UPDATE `questionnaire`  SET title = ?, comment = ? WHERE id = ?;'
-    values = [survey.title, survey.comment, survey.id]
+    values = [title, comment, surveyId]
     await conn.execute(sql, values)
 
     sql = 'SELECT id FROM `questionnaire_detail` WHERE questionnaire_id = ?;'
-    values = [survey.id]
+    values = [surveyId]
     result = await conn.execute(sql, values)
 
     if (result[0].length < 1) {
@@ -180,8 +175,25 @@ export const sqlCacheSurvey = (survey) => useOneConn(async (conn) => {
     } else {
         sql = 'UPDATE `questionnaire_detail` SET structure_json = ? WHERE questionnaire_id = ?;'
     }
-    values = [survey.structure_json, survey.id]
+
+    values = [structure_json, surveyId]
     await conn.execute(sql, values)
+
+    return surveyId
+})
+
+/** 创建一份新的问卷 */
+export const sqlCreateNewSurvey = (userId, title, comment, structure_json) => useOneConn(async (conn) => {
+    let sql, values, result
+    sql = 'INSERT INTO `questionnaire` (creator_id, title, comment) value (?, ?, ?)'
+    values = [userId, title, comment]
+    result = await conn.execute(sql, values)
+    const surveyId = result[0].insertId
+    // 同时初始化一条问卷具体内容信息
+    sql = 'INSERT INTO questionnaire_detail(structure_json, questionnaire_id) VALUE (?, ?)'
+    values = [structure_json, surveyId]
+    await conn.execute(sql, values)
+    return surveyId
 })
 
 /**

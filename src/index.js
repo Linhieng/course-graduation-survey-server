@@ -77,8 +77,9 @@ app.post('/api/user/action-log', mockDelay, getActionLog)
 
 
 // 问卷
-app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
 app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
+
+app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
 app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
 app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
 app.get('/api/survey/id-:surveyId', mockDelay, midVerifyAuth, GetSurveyByID)

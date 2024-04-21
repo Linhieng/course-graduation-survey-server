@@ -1,5 +1,5 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { sqlCacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid } from '../sql/survey.js'
+import { createNewSurvey, getAllSurvey, getSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 export const publishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
@@ -145,7 +145,7 @@ export const GetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */re
 })
 
 /**
- * 定时缓存用户创建的问卷信息
+ * 缓存用户问卷，如果问卷不存在，则自动创建问卷。
  */
 export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     /** @type {ResCacheSurvey} */
@@ -153,15 +153,20 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
 
     /** @type {ReqSurveyAche} */
     const survey = req.body
+    let surveyId = survey.id
+    const userId = req.auth.userId
 
-    try {
-        await sqlCacheSurvey(survey)
-    } catch (error) {
-        error.__explain = '缓存失败，未知错误'
-        throw error
+    if (!surveyId) {
+        // 自动创建问卷
+        surveyId = await sqlCreateNewSurvey(userId, survey.title, survey.comment, survey.structure_json)
+    } else {
+        await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
     }
 
-    resData.data = { time: new Date() }
+    resData.data = {
+        surveyId,
+        time: new Date(),
+    }
     res.send(resData)
 })
 

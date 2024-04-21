@@ -27,6 +27,7 @@ interface ReqSurveyAche {
     title: string
     comment: string
 
+    /** 对应 questionnaire_detail 表中的 structure_json  */
     structure_json: Object
 }
 
