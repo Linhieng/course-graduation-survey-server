@@ -10,8 +10,6 @@ import {
     isAuthExpired,
     cacheQuestionnaire,
     answerGetSurveyByID,
-    toggleSurveyDelete,
-    toggleSurveyValid,
     answerAddOne,
     statData,
     logout,
@@ -95,9 +93,6 @@ app.post('/api/survey/recover/:surveyId', mockDelay, recoverSurvey)
 // 回答
 app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
 app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
-
-app.post('/survey/toggle-del/:surveyId', toggleSurveyDelete)
-app.post('/survey/toggle-valid/:surveyId', toggleSurveyValid)
 
 app.get('/stat/:surveyId', statData)
 
