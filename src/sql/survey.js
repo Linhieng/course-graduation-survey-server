@@ -142,7 +142,7 @@ export const sqlToggleSurveyDeleted = (id, deleted_status) => useOneConn(async (
  * @param {TypeID} id
  * @returns {Promise<'Not Found' | [SchemaQuestionnaire, SchemaQuestionnaireDetail]>}
  */
-export const getSurveyById = (id) => useOneConn(async (conn) => {
+export const sqlGetSurveyById = (id) => useOneConn(async (conn) => {
     let result, sql, values
     sql = 'SELECT * FROM `questionnaire_detail` WHERE questionnaire_id = ? LIMIT 1;'
     values = [id]
@@ -223,7 +223,7 @@ export const createNewSurvey = (title) => useOneConn(async (conn) => {
  * @param {TypeID} creator_id
  * @returns {Promise<ResGetAllSurveyData[]>}
  */
-export const getAllSurvey = (creator_id) => useOneConn(async (conn) => {
+export const sqlGetAllSurvey = (creator_id) => useOneConn(async (conn) => {
     // let sql = 'SELECT (`id`, `title`, `comment`, `sort_order`, `creator_id`, `is_draft`, `is_valid`, `is_deleted`, `created_at`, `updated_at`) FROM `questionnaire` where `creator_id` = ?'
     const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ?'
     let values = [creator_id]

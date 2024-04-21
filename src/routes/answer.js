@@ -1,5 +1,5 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { getSurveyById, insertOneAnswer } from '../sql/index.js'
+import { sqlGetSurveyById, insertOneAnswer } from '../sql/index.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 /**
@@ -18,7 +18,7 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
         return
     }
 
-    const result = await getSurveyById(id)
+    const result = await sqlGetSurveyById(id)
     if (result === 'Not Found') {
         resData.status = STATUS_FAILED
         // 不存在此问卷
@@ -61,7 +61,7 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
         return
     }
 
-    /** @type {ResOneSurvey} */
+    /** @type {ResDataOneSurvey} */
     const surveyData = {
         id: survey.id,
         title: survey.title,

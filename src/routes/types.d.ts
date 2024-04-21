@@ -1,4 +1,4 @@
-interface ResOneSurvey {
+interface ResDataOneSurvey {
     id: number;
     title: string;
     comment: string;

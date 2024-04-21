@@ -4,13 +4,12 @@ import bodyParser from 'body-parser'
 import { defaultHandler, getRespondData } from './utils/index.js'
 import { initConnPool } from './sql/index.js'
 import {
-    getAllQuestionnaires,
+    getAllSurvey,
     login,
     signup,
     isAuthExpired,
     createNewQuestionnaire,
     cacheQuestionnaire,
-    GetSurveyByID,
     answerGetSurveyByID,
     toggleSurveyDelete,
     toggleSurveyValid,
@@ -23,6 +22,8 @@ import {
     modifyPassword,
     uploadFile,
     getActionLog,
+    getSurveyById,
+    getSurveyForEdit,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { midVerifyAuth } from './auth/token.js'
@@ -78,12 +79,15 @@ app.post('/api/user/action-log', mockDelay, getActionLog)
 
 // 问卷
 app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
+app.get('/api/survey/get/:surveyId', mockDelay, getSurveyById)
+app.get('/api/survey/get-for-edit/:surveyId', mockDelay, getSurveyForEdit)
+app.get('/api/survey/get-all-surveys', mockDelay, getAllSurvey)
 
-app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
-app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
-app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
-app.get('/api/survey/id-:surveyId', mockDelay, midVerifyAuth, GetSurveyByID)
-app.post('/api/survey/publish/:surveyId', mockDelay, midVerifyAuth, publishSurvey)
+
+// app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
+// app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
+// app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
+// app.post('/api/survey/publish/:surveyId', mockDelay, midVerifyAuth, publishSurvey)
 
 // 回答
 app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
