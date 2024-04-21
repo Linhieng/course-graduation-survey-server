@@ -172,29 +172,25 @@ export const getAllSurvey = asyncHandler(async (/** @type {ExpressRequest} */req
 export const getPublishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
     const userId = req.auth.userId
-    const all_surveys = await sqlGetPublishSurvey(userId)
-    resData.data = { all_surveys }
+    resData.data = await sqlGetPublishSurvey(userId)
     res.send(resData)
 })
 export const getDraftSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
     const userId = req.auth.userId
-    const all_surveys = await sqlGetDraftSurvey(userId)
-    resData.data = { all_surveys }
+    resData.data = await sqlGetDraftSurvey(userId)
     res.send(resData)
 })
 export const getDelSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
     const userId = req.auth.userId
-    const all_surveys = await sqlGetDelSurvey(userId)
-    resData.data = { all_surveys }
+    resData.data = await sqlGetDelSurvey(userId)
     res.send(resData)
 })
 export const getStopSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
     const userId = req.auth.userId
-    const all_surveys = await sqlGetStopSurvey(userId)
-    resData.data = { all_surveys }
+    resData.data = await sqlGetStopSurvey(userId)
     res.send(resData)
 })
 export const getAllSurveyClassify = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
