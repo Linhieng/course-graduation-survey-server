@@ -2,6 +2,52 @@ import { STATUS_FAILED } from '../constants/response.js'
 import { createNewSurvey, getAllSurvey, getSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
+/**
+ * 缓存用户问卷，如果问卷不存在，则自动创建问卷。
+ */
+export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    /** @type {ResCacheSurvey} */
+    const resData = getRespondData()
+
+    /** @type {ReqSurveyAche} */
+    const survey = req.body
+    let surveyId = survey.id
+    const userId = req.auth.userId
+
+    if (!surveyId) {
+        // 自动创建问卷
+        surveyId = await sqlCreateNewSurvey(userId, survey.title, survey.comment, survey.structure_json)
+    } else {
+        await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
+    }
+
+    resData.data = {
+        surveyId,
+        time: new Date(),
+    }
+    res.send(resData)
+})
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 export const publishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
 
@@ -141,32 +187,6 @@ export const GetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */re
     }
     resData.data = surveyData
 
-    res.send(resData)
-})
-
-/**
- * 缓存用户问卷，如果问卷不存在，则自动创建问卷。
- */
-export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
-    /** @type {ResCacheSurvey} */
-    const resData = getRespondData()
-
-    /** @type {ReqSurveyAche} */
-    const survey = req.body
-    let surveyId = survey.id
-    const userId = req.auth.userId
-
-    if (!surveyId) {
-        // 自动创建问卷
-        surveyId = await sqlCreateNewSurvey(userId, survey.title, survey.comment, survey.structure_json)
-    } else {
-        await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
-    }
-
-    resData.data = {
-        surveyId,
-        time: new Date(),
-    }
     res.send(resData)
 })
 
