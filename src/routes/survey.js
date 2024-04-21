@@ -1,5 +1,13 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { sqlGetAllSurvey, sqlGetSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat, sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey } from '../sql/survey.js'
+import {
+    sqlGetAllSurvey, sqlGetSurveyById, sqlPublishSurvey,
+    sqlGetPublishSurvey,
+    sqlGetDraftSurvey,
+    sqlGetDelSurvey,
+    sqlGetStopSurvey,
+    sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat,
+    sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey,
+} from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 /**
@@ -158,6 +166,48 @@ export const getAllSurvey = asyncHandler(async (/** @type {ExpressRequest} */req
 })
 
 
+
+
+
+export const getPublishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+    const all_surveys = await sqlGetPublishSurvey(userId)
+    resData.data = { all_surveys }
+    res.send(resData)
+})
+export const getDraftSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+    const all_surveys = await sqlGetDraftSurvey(userId)
+    resData.data = { all_surveys }
+    res.send(resData)
+})
+export const getDelSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+    const all_surveys = await sqlGetDelSurvey(userId)
+    resData.data = { all_surveys }
+    res.send(resData)
+})
+export const getStopSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+    const all_surveys = await sqlGetStopSurvey(userId)
+    resData.data = { all_surveys }
+    res.send(resData)
+})
+export const getAllSurveyClassify = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+    resData.data = {
+        publish: await sqlGetPublishSurvey(userId),
+        draft: await sqlGetDraftSurvey(userId),
+        del: await sqlGetDelSurvey(userId),
+        stop: await sqlGetStopSurvey(userId),
+    }
+    res.send(resData)
+})
 
 
 

@@ -25,6 +25,11 @@ import {
     stopSurvey,
     delSurvey,
     recoverSurvey,
+    getPublishSurvey,
+    getDraftSurvey,
+    getDelSurvey,
+    getStopSurvey,
+    getAllSurveyClassify,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -83,6 +88,12 @@ app.get('/api/survey/get/:surveyId', mockDelay, getSurveyById)
 app.get('/api/survey/get-for-edit/:surveyId', mockDelay, getSurveyForEdit)
 app.get('/api/survey/get-all-surveys', mockDelay, getAllSurvey)
 app.get('/api/survey/stat', mockDelay, getSurveyStat)
+// TODO: 重复：
+app.get('/api/survey/get-publish', mockDelay, getPublishSurvey)
+app.get('/api/survey/get-draft', mockDelay, getDraftSurvey)
+app.get('/api/survey/get-del', mockDelay, getDelSurvey)
+app.get('/api/survey/get-stop', mockDelay, getStopSurvey)
+app.get('/api/survey/all-classify', mockDelay, getAllSurveyClassify)
 // TODO: 这几个几乎全是重复的……
 app.post('/api/survey/publish/:surveyId', mockDelay, publishSurvey)
 app.post('/api/survey/stop/:surveyId', mockDelay, stopSurvey)

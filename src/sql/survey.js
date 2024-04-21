@@ -345,3 +345,60 @@ export const sqlGetAllSurvey = (creator_id) => useOneConn(async (conn) => {
     let result = await conn.execute(sql, values)
     return result[0]
 })
+
+
+/**
+ * 获取当前用户所拥有的已发布的问卷
+ *
+ * @param {TypeID} userId
+ * @returns {Promise<ResGetAllSurveyData[]>}
+ */
+export const sqlGetPublishSurvey = (userId) => useOneConn(async (conn) => {
+    // let sql = 'SELECT (`id`, `title`, `comment`, `sort_order`, `creator_id`, `is_draft`, `is_valid`, `is_deleted`, `created_at`, `updated_at`) FROM `questionnaire` where `creator_id` = ?'
+    const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ? and is_draft = 0 and is_valid = 1 and is_deleted = 0'
+    let values = [userId]
+    let result = await conn.execute(sql, values)
+    return result[0]
+})
+
+/**
+ * 获取当前用户所拥有的草稿的问卷
+ *
+ * @param {TypeID} userId
+ * @returns {Promise<ResGetAllSurveyData[]>}
+ */
+export const sqlGetDraftSurvey = (userId) => useOneConn(async (conn) => {
+    // let sql = 'SELECT (`id`, `title`, `comment`, `sort_order`, `creator_id`, `is_draft`, `is_valid`, `is_deleted`, `created_at`, `updated_at`) FROM `questionnaire` where `creator_id` = ?'
+    const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ? and is_draft = 1 and is_deleted = 0'
+    let values = [userId]
+    let result = await conn.execute(sql, values)
+    return result[0]
+})
+
+/**
+ * 获取当前用户所拥有的已删除的问卷
+ *
+ * @param {TypeID} userId
+ * @returns {Promise<ResGetAllSurveyData[]>}
+ */
+export const sqlGetDelSurvey = (userId) => useOneConn(async (conn) => {
+    // let sql = 'SELECT (`id`, `title`, `comment`, `sort_order`, `creator_id`, `is_draft`, `is_valid`, `is_deleted`, `created_at`, `updated_at`) FROM `questionnaire` where `creator_id` = ?'
+    const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ? and is_deleted = 1'
+    let values = [userId]
+    let result = await conn.execute(sql, values)
+    return result[0]
+})
+
+/**
+ * 获取当前用户所拥有的已停止回收的问卷
+ *
+ * @param {TypeID} userId
+ * @returns {Promise<ResGetAllSurveyData[]>}
+ */
+export const sqlGetStopSurvey = (userId) => useOneConn(async (conn) => {
+    // let sql = 'SELECT (`id`, `title`, `comment`, `sort_order`, `creator_id`, `is_draft`, `is_valid`, `is_deleted`, `created_at`, `updated_at`) FROM `questionnaire` where `creator_id` = ?'
+    const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ? and is_draft = 0 and is_valid = 0 and is_deleted = 0'
+    let values = [userId]
+    let result = await conn.execute(sql, values)
+    return result[0]
+})
