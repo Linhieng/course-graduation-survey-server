@@ -86,16 +86,6 @@ interface ResCacheSurveyData {
 }
 type ResCacheSurvey = ResWrapper<ResCacheSurveyData>
 
-/**
- * 获取单份问卷信息返回的响应数据
- */
-interface ResOneSurveyData {
-    id: TypeID
-    title: string
-    comment: string
-    questions: Object
-}
-type ResOneSurvey = ResWrapper<ResOneSurveyData>
 
 /**
  * 统计数据时响应的数据

@@ -3,35 +3,14 @@ import { getSurveyById, insertOneAnswer } from '../sql/index.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 /**
- * 填写一份问卷
- */
-export const answerAddOne = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
-    const resData = getRespondData()
-
-    const surveyId = Number(req.params.surveyId)
-    if (!surveyId || Number.isNaN(surveyId)) {
-        resData.status = STATUS_FAILED
-        resData.msg = '请提供 surveyId'
-        res.status(400).send(resData)
-        return
-    }
-    const body = req.body
-    await insertOneAnswer(body, req.ip)
-    resData.msg = '你的回答已保存！'
-
-    res.send(resData)
-})
-
-/**
- * 用户填写问卷时，获取问卷信息。
- * 如果问卷不存在、已被删除、未发布，则返回 404
+ * 获取问卷信息，只获取问卷，不获取皮肤等内容。
+ * 同时，由于是公开的，所以草稿相关问卷不会返回。
  */
 export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
-    /** @type {ResOneSurvey} */
     const resData = getRespondData()
 
     const id = Number(req.params.surveyId)
-    if (!id || Number.isNaN(id)) {
+    if (Number.isNaN(id)) {
         resData.status = STATUS_FAILED
         // 问卷填写链接错误
         resData.msg = 'api.error.survey-link-wrong'
@@ -50,6 +29,15 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
 
     const survey = result[0]
     const surveyDetail = result[1]
+
+    // 草稿，不可回答
+    if (survey.is_draft) {
+        resData.status = STATUS_FAILED
+        // 问卷未完成
+        resData.msg = 'api.error.survey-not-complete'
+        res.status(404).send(resData)
+        return
+    }
 
     if (survey.is_deleted) {
         resData.status = STATUS_FAILED
@@ -73,14 +61,35 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
         return
     }
 
-    /** @type {ResOneSurveyData} */
+    /** @type {ResOneSurvey} */
     const surveyData = {
         id: survey.id,
         title: survey.title,
         comment: survey.comment,
-        questions: surveyDetail.structure_json,
+        structure_json: surveyDetail.structure_json,
     }
     resData.data = surveyData
+
+    res.send(resData)
+})
+
+
+/**
+ * 填写一份问卷
+ */
+export const answerAddOne = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = Number(req.params.surveyId)
+    if (!surveyId || Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        resData.msg = '请提供 surveyId'
+        res.status(400).send(resData)
+        return
+    }
+    const body = req.body
+    await insertOneAnswer(body, req.ip)
+    resData.msg = '你的回答已保存！'
 
     res.send(resData)
 })
