@@ -1,6 +1,59 @@
 import { useOneConn } from './index.js'
 
 /**
+ * 获取相关问卷统计信息。暂时就这么多吧。
+ *
+ * @param {*} userId
+ * @returns {Promise<ResDataSurveyStatInfo>} 出错交给默认程序处理。
+ */
+export const sqlGetSurveyStat = (userId) => useOneConn(async (conn) => {
+    let sql, result, values = [userId]
+    /** @type {ResDataSurveyStatInfo} */
+    const res = {
+        all_survey_count: undefined,
+        draft_survey_count: undefined,
+        publish_survey_count: undefined,
+        stop_survey_count: undefined,
+        del_survey_count: undefined,
+        total_answer_count: 0,
+        all_survey_info: {},
+    }
+
+    sql = 'SELECT COUNT(*) as c FROM questionnaire WHERE creator_id = ?;'
+    result = await conn.execute(sql, values)
+    res.all_survey_count = result[0][0].c
+    sql = 'SELECT COUNT(*) as c FROM questionnaire WHERE creator_id = ? AND is_draft = 1;'
+    result = await conn.execute(sql, values)
+    res.draft_survey_count = result[0][0].c
+    sql = 'SELECT COUNT(*) as c FROM questionnaire WHERE creator_id = ? AND is_draft = 0 AND is_deleted = 1;'
+    result = await conn.execute(sql, values)
+    res.del_survey_count = result[0][0].c
+    sql = 'SELECT COUNT(*) as c FROM questionnaire WHERE creator_id = ? AND is_draft = 0 AND is_deleted = 0 AND is_valid = 0;'
+    result = await conn.execute(sql, values)
+    res.publish_survey_count = result[0][0].c
+    sql = 'SELECT COUNT(*) as c FROM questionnaire WHERE creator_id = ? AND is_draft = 0 AND is_deleted = 0 AND is_valid = 1;'
+    result = await conn.execute(sql, values)
+    res.stop_survey_count = result[0][0].c
+
+    sql = `SELECT s.id as sur, s.title as title,  COUNT(a.id) AS ans
+        FROM questionnaire s
+        LEFT JOIN questionnaire_answer a ON s.id = a.questionnaire_id
+        WHERE s.creator_id = ?
+        GROUP BY s.id`
+    // result[0] 是一个对象数组，对象的 key 分别是 sur, title 和 ans，值就是具体的值。
+    result = await conn.execute(sql, values)
+    result[0].forEach((item) => {
+        res.total_answer_count += item.ans
+        res.all_survey_info[item.sur] = {
+            surveyId: item.sur,
+            title: item.title,
+            answer_count: item.ans,
+        }
+    })
+    return res
+})
+
+/**
  * 返回一份问卷，同时携带该问卷收集到的所有回答
  *
  * @param {number} surveyId
@@ -62,6 +115,68 @@ export const insertOneAnswer = (body, ip) => useOneConn(async (conn) => {
 })
 
 
+/**
+ * @param {TypeID} id
+ * @return {Promise<'Not Found' | 'ok'>}
+ */
+export const sqlRecoverSurvey = (id) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'SELECT is_valid FROM questionnaire WHERE id = ?;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+
+    sql = 'UPDATE questionnaire SET is_draft = ?, is_valid = ?, is_deleted = ? WHERE id = ?;'
+    values = [0, 0, 0, id]
+    await conn.execute(sql, values)
+
+    return 'ok'
+})
+/**
+ * @param {TypeID} id
+ * @return {Promise<'Not Found' | 'ok'>}
+ */
+export const sqlDelSurvey = (id) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'SELECT is_valid FROM questionnaire WHERE id = ?;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+
+    sql = 'UPDATE questionnaire SET is_draft = ?, is_valid = ?, is_deleted = ? WHERE id = ?;'
+    values = [0, 0, 1, id]
+    await conn.execute(sql, values)
+
+    return 'ok'
+})
+/**
+ * 停止问卷的收集。变更 is_draft 为 0，变更 is_valid 为 1
+ *
+ * @param {TypeID} id
+ * @return {Promise<'Not Found' | 'ok'>}
+ */
+export const sqlStopSurvey = (id) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'SELECT is_valid FROM questionnaire WHERE id = ?;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0].length < 1) {
+        return 'Not Found'
+    }
+
+    sql = 'UPDATE questionnaire SET is_draft = ?, is_valid = ? WHERE id = ?;'
+    values = [0, 0, id]
+    await conn.execute(sql, values)
+
+    return 'ok'
+})
 /**
  * 发布一份问卷。变更 is_draft 为 0，变更 is_valid 为 1
  *

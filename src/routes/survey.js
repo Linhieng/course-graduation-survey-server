@@ -1,5 +1,5 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { createNewSurvey, sqlGetAllSurvey, sqlGetSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey } from '../sql/survey.js'
+import { createNewSurvey, sqlGetAllSurvey, sqlGetSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid, sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat, sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 /**
@@ -130,6 +130,18 @@ export const getSurveyForEdit = asyncHandler(async (/** @type {ExpressRequest} *
     res.send(resData)
 })
 
+/**
+ * 获取问卷总的数量，以及他们所对应的回答数量，并进行划分：草稿、发布中、已停止、已删除。
+ */
+export const getSurveyStat = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+
+    const statData = await sqlGetSurveyStat(userId)
+
+    resData.data = statData
+    res.send(resData)
+})
 
 /**
  * 获取当前用户的所有问卷，包含已经被标记为删除的。
@@ -144,27 +156,20 @@ export const getAllSurvey = asyncHandler(async (/** @type {ExpressRequest} */req
     resData.data = { all_surveys }
     res.send(resData)
 })
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+
+
+
+
+
+
+
+
+
+// TODO: 下面这几个几乎都是重复的。
+/**
+ * 发布问卷
+ */
 export const publishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
 
@@ -188,6 +193,105 @@ export const publishSurvey = asyncHandler(async (/** @type {ExpressRequest} */re
 
     res.send(resData)
 })
+/**
+ * 停止问卷的收集
+ */
+export const stopSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = Number(req.params.surveyId)
+    if (Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        // 请提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
+        res.status(400).send(resData)
+        return
+    }
+
+    const result = await sqlStopSurvey(surveyId)
+    if (result === 'Not Found') {
+        resData.status = STATUS_FAILED
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
+        res.status(400).send(resData)
+        return
+    }
+
+    res.send(resData)
+})
+/**
+ * 删除某个问卷
+ */
+export const delSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = Number(req.params.surveyId)
+    if (Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        // 请提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
+        res.status(400).send(resData)
+        return
+    }
+
+    const result = await sqlDelSurvey(surveyId)
+    if (result === 'Not Found') {
+        resData.status = STATUS_FAILED
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
+        res.status(400).send(resData)
+        return
+    }
+
+    res.send(resData)
+})
+/**
+ * 恢复某个问卷
+ */
+export const recoverSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+
+    const surveyId = Number(req.params.surveyId)
+    if (Number.isNaN(surveyId)) {
+        resData.status = STATUS_FAILED
+        // 请提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
+        res.status(400).send(resData)
+        return
+    }
+
+    const result = await sqlRecoverSurvey(surveyId)
+    if (result === 'Not Found') {
+        resData.status = STATUS_FAILED
+        // 不存在此问卷
+        resData.msg = 'api.error.survey-not-exist'
+        res.status(400).send(resData)
+        return
+    }
+
+    res.send(resData)
+})
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 export const toggleSurveyValid = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()

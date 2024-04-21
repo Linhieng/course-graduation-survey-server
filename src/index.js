@@ -8,7 +8,6 @@ import {
     login,
     signup,
     isAuthExpired,
-    createNewQuestionnaire,
     cacheQuestionnaire,
     answerGetSurveyByID,
     toggleSurveyDelete,
@@ -24,9 +23,12 @@ import {
     getActionLog,
     getSurveyById,
     getSurveyForEdit,
+    getSurveyStat,
+    stopSurvey,
+    delSurvey,
+    recoverSurvey,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
-import { midVerifyAuth } from './auth/token.js'
 import { CODE_ERROR } from './constants/response.js'
 import { useExpressJwt } from './auth/index.js'
 import multer from 'multer'
@@ -82,12 +84,16 @@ app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
 app.get('/api/survey/get/:surveyId', mockDelay, getSurveyById)
 app.get('/api/survey/get-for-edit/:surveyId', mockDelay, getSurveyForEdit)
 app.get('/api/survey/get-all-surveys', mockDelay, getAllSurvey)
-
+app.get('/api/survey/stat', mockDelay, getSurveyStat)
+// TODO: 这几个几乎全是重复的……
+app.post('/api/survey/publish/:surveyId', mockDelay, publishSurvey)
+app.post('/api/survey/stop/:surveyId', mockDelay, stopSurvey)
+app.post('/api/survey/del/:surveyId', mockDelay, delSurvey)
+app.post('/api/survey/recover/:surveyId', mockDelay, recoverSurvey)
 
 // app.post('/api/survey/create', mockDelay, createNewQuestionnaire)
 // app.get('/api/survey/get-all-surveys/:userId', mockDelay, midVerifyAuth, getAllQuestionnaires)
 // app.get('/api/survey/get-all-surveys', mockDelay, midVerifyAuth, getAllQuestionnaires)
-// app.post('/api/survey/publish/:surveyId', mockDelay, midVerifyAuth, publishSurvey)
 
 // 回答
 app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
