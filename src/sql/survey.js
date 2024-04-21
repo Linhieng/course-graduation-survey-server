@@ -163,7 +163,7 @@ export const getSurveyById = (id) => useOneConn(async (conn) => {
  * @param {ReqSurveyAche} survey
  * @returns
  */
-export const cacheSurvey = (survey) => useOneConn(async (conn) => {
+export const sqlCacheSurvey = (survey) => useOneConn(async (conn) => {
     let result, sql, values
     if (!survey.id) throw Error('id 为 空')
 

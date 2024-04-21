@@ -1,5 +1,5 @@
 import { STATUS_FAILED } from '../constants/response.js'
-import { cacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid } from '../sql/survey.js'
+import { sqlCacheSurvey, createNewSurvey, getAllSurvey, getSurveyById, sqlPublishSurvey, sqlToggleSurveyDeleted, sqlToggleSurveyValid } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 export const publishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
@@ -155,7 +155,7 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
     const survey = req.body
 
     try {
-        await cacheSurvey(survey)
+        await sqlCacheSurvey(survey)
     } catch (error) {
         error.__explain = '缓存失败，未知错误'
         throw error
@@ -199,6 +199,6 @@ export const createNewQuestionnaire = asyncHandler(async (/** @type {ExpressRequ
     const surveyId = await createNewSurvey('未命名问卷')
 
     // 将对应问卷信息 id 返回
-    resData.data = {surveyId}
+    resData.data = { surveyId }
     res.send(resData)
 })
