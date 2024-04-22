@@ -1,3 +1,4 @@
+import { getRequestIp } from '../utils/generate.js'
 import { useOneConn } from './usePool.js'
 
 /**
@@ -154,4 +155,71 @@ export const sqlGetCountStat = (userId) => useOneConn(async (conn) => {
 
 
     return res
+})
+
+/**
+ *
+ * @param {*} day
+ * @returns
+ */
+export const sqlStatSurveyVisitGroupByDay = (day = 7) => useOneConn(async (conn) => {
+    let sql, values, result
+    const res = {
+        /** @type {x:string, y:string} */
+        chartData: [],
+    }
+
+    sql = `
+            WITH RECURSIVE
+            dates_seq AS (--
+                SELECT CURDATE() AS date_str, 0 AS date_count
+                UNION ALL
+                SELECT DATE_SUB(date_str, INTERVAL 1 DAY), 0
+                FROM dates_seq
+                WHERE date_str > DATE_SUB(CURDATE(), INTERVAL ? DAY)--
+            ),
+            counts AS (--
+                SELECT DATE_FORMAT(q.created_at, '%Y-%m-%d') AS formatted_date, COUNT(*) AS count
+                FROM record_visit AS q
+                WHERE method = 'GET'
+                  and router LIKE ?
+                GROUP BY formatted_date --
+            )
+        SELECT d.date_str as d,
+               COALESCE(qc.count, 0) AS count
+        FROM dates_seq d
+                 LEFT JOIN counts qc ON d.date_str = qc.formatted_date
+        ORDER BY d.date_str;
+    `
+    values = [day - 1, '/api/answer/%']
+    result = await conn.execute(sql, values)
+    result[0].forEach(({ d: x, count: y }) => {
+        res.chartData.push({ x, y })
+    })
+
+    return res
+})
+
+/**
+ * 添加一条访问记录
+ */
+export const sqlAddOneVisitRecord = (/** @type {import('express').Request}*/req) => useOneConn(async (conn) => {
+    let sql, values
+    sql = `
+        insert into
+        record_visit
+            (survey_id, user_id, ip, user_agent, visit_type, method, router, info)
+        value (?, ?, ?, ?, ?, ?, ?, ?)
+    `
+    values = [
+        req.params.surveyId || -1,
+        req.auth?.userId || 1,
+        getRequestIp(req),
+        req.headers['user-agent'],
+        0, // 访问类型没想好，统一为 0
+        req.method,
+        req.url,
+        '',
+    ]
+    conn.execute(sql, values)
 })

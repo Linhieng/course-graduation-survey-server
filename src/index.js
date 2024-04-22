@@ -32,11 +32,13 @@ import {
     updateAndPublishSurvey,
     statCountStat,
     statGroupByDay,
+    statVisitSurveyGroupByDay,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
 import { useExpressJwt } from './auth/index.js'
 import multer from 'multer'
+import { statVisit } from './mid/stat.js'
 
 const port = 3000
 const app = express()
@@ -64,7 +66,8 @@ app.use('/assets/public', express.static('src/public'))
 // 使用 jwt token 校验
 useExpressJwt(app)
 
-
+// 记录每一条请求。只有鉴权通过才会到这里。
+app.use(statVisit)
 
 const mockDelay = (req, res, next) => {
     setTimeout(next, 2000)
@@ -111,6 +114,7 @@ app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 // 统计相关
 app.get('/api/stat/count-stat', mockDelay, statCountStat)
 app.get('/api/stat/group-by-day', mockDelay, statGroupByDay)
+app.get('/api/stat/visit-survey-group-by-day', mockDelay, statVisitSurveyGroupByDay)
 
 app.all('*', (req, res) => {
     const resData = getRespondData('failed', CODE_ERROR, 'api.error.url.404')

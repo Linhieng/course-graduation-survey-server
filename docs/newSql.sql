@@ -1,3 +1,30 @@
+DROP TABLE IF EXISTS record_visit;
+CREATE TABLE record_visit
+(
+    id         INT AUTO_INCREMENT  NOT NULL COMMENT '主键，自增',
+    survey_id  INT                 NOT NULL COMMENT '访问的问卷 id，不设外键，因为可能没有',
+    user_id    INT                 NOT NULL COMMENT '访问的用户，1 表示无登录',
+    ip         VARCHAR(100)        NOT NULL COMMENT '用户所在 IP',
+    user_agent VARCHAR(255)        NOT NULL COMMENT '浏览器的 user_agent 字符串',
+    visit_type TINYINT   DEFAULT 0 NOT NULL COMMENT '访问的类型，没想好，直接为 0',
+    method     VARCHAR(10)         NOT NULL COMMENT '访问的方法',
+    router     VARCHAR(255)        NOT NULL COMMENT '访问的路由',
+    info       VARCHAR(255)        NOT NULL COMMENT '备注',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间，自动赋值',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间，自动赋值',
+    PRIMARY KEY (id), -- 主键添加在后面，更美观
+    FOREIGN KEY (user_id) REFERENCES user (id)
+) COMMENT = '访问统计表'
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4;
+
+
+
+
+
+
+
 DROP TABLE IF EXISTS stat_count;
 CREATE TABLE stat_count
 (

@@ -35,6 +35,10 @@ export function defaultHandler(err, req, res, _next) {
         const resData = getRespondData('failed', CODE_ERROR, err.msg)
         res.status(err.status).send(resData)
     }
+    if (err instanceof Error4xx) {
+        const resData = getRespondData('failed', CODE_ERROR, err.msg)
+        res.status(err.statusCode).send(resData)
+    }
 
     console.error(err)
     // api.error.default.unknown
@@ -65,6 +69,13 @@ export class SqlError extends Error {
     constructor(status, msg) {
         super('sql 错误: ' + msg)
         this.status = status
+        this.msg = msg
+    }
+}
+export class Error4xx extends Error {
+    constructor(statusCode, msg) {
+        super('客户端参数错误 400: ' + msg)
+        this.statusCode = statusCode
         this.msg = msg
     }
 }
