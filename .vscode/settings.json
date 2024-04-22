@@ -1,4 +1,8 @@
 {
+    "files.exclude": {
+        "dist": true,
+        "node_modules": true,
+    },
     "eslint.experimental.useFlatConfig": true,
     "editor.detectIndentation": false,
     "editor.tabSize": 4,
