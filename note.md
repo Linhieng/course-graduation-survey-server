@@ -2,6 +2,57 @@
 
 根据开发过程，按时间顺序编写。上面新，下面旧。
 
+## sql 语句查询
+
+按天数查询：
+
+```sql
+-- 注意这里的日期格式要和 group by 中的一致。
+select DATE_FORMAT(q.created_at, '%Y-%m-%d'), count(*)
+from questionnaire as q
+where creator_id=13
+group by DATE_FORMAT(created_at,'%Y-%m-%d')
+order by DATE_FORMAT(created_at,'%Y-%m-%d') DESC
+;
+```
+
+生成一个日期序列
+
+```sql
+WITH RECURSIVE dates_seq AS ( -- 递归，需要 mysql8
+    SELECT CURDATE() AS date_str, 0 AS date_count
+    UNION ALL
+    SELECT DATE_SUB(date_str, INTERVAL 1 DAY), 0
+    FROM dates_seq
+    WHERE date_str > DATE_SUB(CURDATE(), INTERVAL 4 DAY) -- 4 表示生成 5 天
+)
+SELECT *
+FROM dates_seq;
+```
+
+连接上面两条 sql 语句，获取最近 5 天内的数据
+
+```sql
+WITH RECURSIVE
+    dates_seq AS ( --
+        SELECT CURDATE() AS date_str, 0 AS date_count
+        UNION ALL
+        SELECT DATE_SUB(date_str, INTERVAL 1 DAY), 0
+        FROM dates_seq
+        WHERE date_str > DATE_SUB(CURDATE(), INTERVAL 4 DAY) -- 4 表示生成 5 天
+    ),
+    questionnaire_counts AS ( --
+        SELECT DATE_FORMAT(q.created_at, '%Y-%m-%d') AS formatted_date, COUNT(*) AS count
+        FROM questionnaire AS q
+        WHERE creator_id = 13 -- 13 表示用户 ID
+        GROUP BY formatted_date)
+SELECT d.date_str,
+       COALESCE(qc.count, 0) AS questionnaire_count
+FROM dates_seq d
+         LEFT JOIN questionnaire_counts qc ON d.date_str = qc.formatted_date
+ORDER BY d.date_str DESC;
+```
+
 ## mysql2 的坑
 
 ```js

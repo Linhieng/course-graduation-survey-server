@@ -31,6 +31,7 @@ import {
     getAllSurveyClassify,
     updateAndPublishSurvey,
     statCountStat,
+    statGroupByDay,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -66,7 +67,7 @@ useExpressJwt(app)
 
 
 const mockDelay = (req, res, next) => {
-    setTimeout(next, 1000)
+    setTimeout(next, 2000)
 }
 
 const upload = multer()
@@ -109,6 +110,7 @@ app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 
 // 统计相关
 app.get('/api/stat/count-stat', mockDelay, statCountStat)
+app.get('/api/stat/group-by-day', mockDelay, statGroupByDay)
 
 app.all('*', (req, res) => {
     const resData = getRespondData('failed', CODE_ERROR, 'api.error.url.404')

@@ -1,6 +1,90 @@
 import { useOneConn } from './usePool.js'
 
 /**
+ * 按天数进行划分的相关统计数据查询
+ * TODO: 代码重复的内容太多了……
+ * @param {number} userId
+ * @param {number} day
+ * @returns
+ */
+export const sqlStatGroupByDay = (userId, day = 7) => useOneConn(async (conn) => {
+    let sql, values = [day - 1, userId], result
+
+    const res = {
+        xAxis: [],
+        data: [
+            { name: '创建问卷', key: 'create_survey', count: 0, value: [] },
+            { name: '发布问卷', key: 'publish_survey', count: 0, value: [] },
+            { name: '问卷草稿', key: 'draft_survey', count: 0, value: [] },
+            { name: '停止收集', key: 'stop_survey', count: 0, value: [] },
+            { name: '删除问卷', key: 'del_survey', count: 0, value: [] },
+        ],
+    }
+
+    const sql_template = (whereStr) => `
+        WITH RECURSIVE
+        dates_seq AS (
+            SELECT CURDATE() AS date_str, 0 AS date_count
+            UNION ALL
+            SELECT DATE_SUB(date_str, INTERVAL 1 DAY), 0
+            FROM dates_seq
+            WHERE date_str > DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        ),
+        questionnaire_counts AS (
+            SELECT DATE_FORMAT(q.created_at, '%Y-%m-%d') AS formatted_date, COUNT(*) AS count
+            FROM questionnaire AS q
+            WHERE creator_id = ? ${whereStr}
+            GROUP BY formatted_date)
+        SELECT d.date_str,
+               COALESCE(qc.count, 0) AS questionnaire_count
+        FROM dates_seq d
+                 LEFT JOIN questionnaire_counts qc ON d.date_str = qc.formatted_date
+        ORDER BY d.date_str;
+    `
+
+    sql = sql_template('')
+    result = await conn.execute(sql, values)
+    result[0].forEach(({ questionnaire_count, date_str }) => {
+        res.xAxis.push(date_str)
+        res.data[0].count += questionnaire_count
+        res.data[0].value.push(questionnaire_count)
+    })
+
+    sql = sql_template('and is_draft = 0 and is_valid = 1')
+    result = await conn.execute(sql, values)
+    result[0].forEach(({ questionnaire_count }) => {
+        res.data[1].count += questionnaire_count
+        res.data[1].value.push(questionnaire_count)
+    })
+
+
+    sql = sql_template(' and is_draft = 1')
+    result = await conn.execute(sql, values)
+    result[0].forEach(({ questionnaire_count }) => {
+        res.data[2].count += questionnaire_count
+        res.data[2].value.push(questionnaire_count)
+    })
+
+
+    sql = sql_template(' and is_draft = 0 and is_valid = 0')
+    result = await conn.execute(sql, values)
+    result[0].forEach(({ questionnaire_count }) => {
+        res.data[3].count += questionnaire_count
+        res.data[3].value.push(questionnaire_count)
+    })
+
+
+    sql = sql_template('and is_deleted = 1')
+    result = await conn.execute(sql, values)
+    result[0].forEach(({ questionnaire_count }) => {
+        res.data[4].count += questionnaire_count
+        res.data[4].value.push(questionnaire_count)
+    })
+
+    return res
+})
+
+/**
  * 获取统计数据，展示在页面上。
  *
  * @returns
