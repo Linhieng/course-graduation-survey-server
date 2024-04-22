@@ -108,6 +108,22 @@ export const insertOneAnswer = ({
     sql = 'INSERT INTO `questionnaire_answer_detail` (answer_id, structure_json) VALUE (?, ?);'
     values = [answerId, answerStructureJson]
     result = await conn.execute(sql, values)
+
+    // 添加一条回答记录
+    // 添加一次访问量。感觉这种日志类的不适合放在这里。但考虑到事务，似乎又应该放在这里。
+    sql = 'SELECT COUNT(*) as n from stat_count where survey_id = ? limit 1;'
+    values = [survey_id]
+    result = await conn.execute(sql, values)
+    if (result[0][0].n < 1) {
+        sql = 'INSERT INTO stat_count(survey_id, count_visit, count_answer) value (?, ?, ?);'
+        values = [survey_id, 1, 1]
+        result = await conn.execute(sql, values)
+    } else {
+        sql = 'UPDATE stat_count set count_answer = count_answer + 1 where survey_id = ?;'
+        values = [survey_id]
+        result = await conn.execute(sql, values)
+    }
+
 })
 
 
@@ -266,6 +282,21 @@ export const sqlGetSurveyById = (id) => useOneConn(async (conn) => {
         return 'Not Found'
     }
 
+    // 添加一次访问量。感觉这种日志类的不适合放在这里。但考虑到事务，似乎又应该放在这里。
+    sql = 'SELECT COUNT(*) as n from stat_count where survey_id = ? limit 1;'
+    values = [id]
+    result = await conn.execute(sql, values)
+    if (result[0][0].n < 1) {
+        sql = 'INSERT INTO stat_count(survey_id, count_visit, count_answer) value (?, ?, ?);'
+        values = [id, 1, 1]
+        result = await conn.execute(sql, values)
+    } else {
+        sql = 'UPDATE stat_count set count_visit = count_visit + 1 where survey_id = ?;'
+        values = [id]
+        result = await conn.execute(sql, values)
+    }
+
+
     return [surveys[0], surveyDetails[0]]
 })
 
@@ -327,6 +358,11 @@ export const sqlCreateNewSurvey = (userId, title, comment, structure_json) => us
     sql = 'INSERT INTO questionnaire_detail(structure_json, questionnaire_id) VALUE (?, ?)'
     values = [structure_json, surveyId]
     await conn.execute(sql, values)
+
+    // 同时初始化统计表
+    sql = 'INSERT INTO stat_count(survey_id, count_visit, count_answer) value (?, ?, ?);'
+    values = [surveyId, 0, 0]
+
     return surveyId
 })
 

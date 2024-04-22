@@ -11,7 +11,6 @@ import {
     cacheQuestionnaire,
     answerGetSurveyByID,
     answerAddOne,
-    statData,
     logout,
     publishSurvey,
     getUserInfo,
@@ -31,6 +30,7 @@ import {
     getStopSurvey,
     getAllSurveyClassify,
     updateAndPublishSurvey,
+    statCountStat,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -107,7 +107,8 @@ app.post('/api/survey/recover/:surveyId', mockDelay, recoverSurvey)
 app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
 app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 
-app.get('/stat/:surveyId', statData)
+// 统计相关
+app.get('/api/stat/count-stat', mockDelay, statCountStat)
 
 app.all('*', (req, res) => {
     const resData = getRespondData('failed', CODE_ERROR, 'api.error.url.404')

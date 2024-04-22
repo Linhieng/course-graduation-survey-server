@@ -1,3 +1,30 @@
+DROP TABLE IF EXISTS stat_count;
+CREATE TABLE stat_count
+(
+    id           INT AUTO_INCREMENT NOT NULL COMMENT '主键，自增',
+    survey_id    INT                NOT NULL COMMENT '外键，绑定问卷',
+    count_visit  INT                NOT NULL COMMENT '访问次数，每获取一次链接就加 1',
+    count_answer INT                NOT NULL COMMENT '每回答一次加加 1',
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间，自动赋值',
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间，自动赋值',
+    PRIMARY KEY (id),                            -- 主键添加在后面，更美观
+    FOREIGN KEY (survey_id) REFERENCES questionnaire (id) -- 外键，绑定 user id
+) COMMENT = '问卷统计数据表'
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4;
+
+
+
+
+
+
+
+
+
+
+
+
+
 DROP TABLE IF EXISTS user_action_log;
 CREATE TABLE user_action_log
 (
