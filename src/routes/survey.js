@@ -7,6 +7,7 @@ import {
     sqlGetStopSurvey,
     sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat,
     sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey,
+    sqlUpdateAndPublishSurvey,
 } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
@@ -29,6 +30,32 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
         // TODO: 不允许编辑非草稿问卷。
         await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
     }
+
+    resData.data = {
+        surveyId,
+        time: new Date(),
+    }
+    res.send(resData)
+})
+/**
+ * 缓存/更新用户问卷，同时直接发布
+ */
+export const updateAndPublishSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    /** @type {ResCacheSurvey} */
+    const resData = getRespondData()
+
+    /** @type {ReqSurveyAche} */
+    const survey = req.body
+    let surveyId = survey.id
+    const userId = req.auth.userId
+
+    if (!surveyId) {
+        // 自动创建问卷
+        surveyId = await sqlCreateNewSurvey(userId, survey.title, survey.comment, survey.structure_json)
+    }
+
+    // TODO: 不允许编辑非草稿问卷。
+    await sqlUpdateAndPublishSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
 
     resData.data = {
         surveyId,

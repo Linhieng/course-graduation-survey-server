@@ -273,6 +273,29 @@ export const sqlGetSurveyById = (id) => useOneConn(async (conn) => {
     return [surveys[0], surveyDetails[0]]
 })
 
+/** 更新并发布已有问卷 */
+export const sqlUpdateAndPublishSurvey = (surveyId, title, comment, structure_json) => useOneConn(async (conn) => {
+    let result, sql, values
+
+    sql = 'UPDATE `questionnaire`  SET title = ?, comment = ?, is_draft = 0, is_valid = 1 WHERE id = ?;'
+    values = [title, comment, surveyId]
+    await conn.execute(sql, values)
+
+    sql = 'SELECT id FROM `questionnaire_detail` WHERE questionnaire_id = ?;'
+    values = [surveyId]
+    result = await conn.execute(sql, values)
+
+    if (result[0].length < 1) {
+        sql = 'INSERT INTO `questionnaire_detail` (structure_json, questionnaire_id) VALUE (?, ?);'
+    } else {
+        sql = 'UPDATE `questionnaire_detail` SET structure_json = ? WHERE questionnaire_id = ?;'
+    }
+
+    values = [structure_json, surveyId]
+    await conn.execute(sql, values)
+
+    return surveyId
+})
 /** 更新已有问卷 */
 export const sqlUpdateSurvey = (surveyId, title, comment, structure_json) => useOneConn(async (conn) => {
     let result, sql, values

@@ -30,6 +30,7 @@ import {
     getDelSurvey,
     getStopSurvey,
     getAllSurveyClassify,
+    updateAndPublishSurvey,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -88,6 +89,7 @@ app.get('/api/survey/get/:surveyId', mockDelay, getSurveyById)
 app.get('/api/survey/get-for-edit/:surveyId', mockDelay, getSurveyForEdit)
 app.get('/api/survey/get-all-surveys', mockDelay, getAllSurvey)
 app.get('/api/survey/stat', mockDelay, getSurveyStat)
+app.post('/api/survey/update-publish', mockDelay, updateAndPublishSurvey)
 // TODO: 重复：
 app.get('/api/survey/get-publish', mockDelay, getPublishSurvey)
 app.get('/api/survey/get-draft', mockDelay, getDraftSurvey)
