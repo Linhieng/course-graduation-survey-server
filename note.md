@@ -53,6 +53,12 @@ FROM dates_seq d
 ORDER BY d.date_str DESC;
 ```
 
+<!--
+    SELECT @cdate := date_add(@cdate, interval - 1 day) as date_str,
+           0                                            as date_count
+    FROM (SELECT @cdate := date_add(CURDATE(), interval + 1 day) from questionnaire) t1;
+ -->
+
 ## mysql2 的坑
 
 ```js
