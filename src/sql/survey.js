@@ -93,24 +93,20 @@ export const getStatData = (surveyId) => useOneConn(async (conn) => {
  * @param {string} ip
  * @returns
  */
-export const insertOneAnswer = (body, ip) => useOneConn(async (conn) => {
+export const insertOneAnswer = ({
+    survey_id, answerUserId, spend_time,
+    ip_from, answerStructureJson,
+}) => useOneConn(async (conn) => {
     let result, sql, values
-
-    const survey_id = body.surveyId
-    // 1 表示匿名用户
-    const answer_user_id = body.answerUserId || 1
-    const spend_time = body.spendTime
-    const ip_from = ip
-    const answerDetail = body.answerDetail
 
     sql = 'INSERT INTO `questionnaire_answer` (questionnaire_id, answer_user_id, spend_time, ip_from) ' +
         'VALUE (?, ?, ?, ?);'
-    values = [survey_id, answer_user_id, spend_time, ip_from]
+    values = [survey_id, answerUserId, spend_time, ip_from]
     result = await conn.execute(sql, values)
     const answerId = result[0].insertId
 
     sql = 'INSERT INTO `questionnaire_answer_detail` (answer_id, structure_json) VALUE (?, ?);'
-    values = [answerId, answerDetail]
+    values = [answerId, answerStructureJson]
     result = await conn.execute(sql, values)
 })
 

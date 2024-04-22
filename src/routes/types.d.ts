@@ -1,3 +1,13 @@
+interface ReqBodyAnswer {
+    surveyId: number,
+    /** 回答者 id */
+    userId?: number,
+    /** 单位秒 */
+    spendTime?: number,
+    answerStructureJson: Record<string, nay>
+}
+
+
 interface ResDataSurveyStatInfo {
     all_survey_count: number
     draft_survey_count: number
@@ -23,5 +33,5 @@ interface ResDataOneSurvey {
 }
 interface SurveyStructureJson {
     version: '0.2.0';
-    questionList: Array<Record<string,any>>;
+    questionList: Array<Record<string, any>>;
 }

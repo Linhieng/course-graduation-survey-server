@@ -1,6 +1,6 @@
 import { STATUS_FAILED } from '../constants/response.js'
 import { sqlGetSurveyById, insertOneAnswer } from '../sql/index.js'
-import { asyncHandler, getRespondData } from '../utils/index.js'
+import { asyncHandler, getRequestIp, getRespondData } from '../utils/index.js'
 
 /**
  * 获取问卷信息，只获取问卷，不获取皮肤等内容。
@@ -80,16 +80,23 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
 export const answerAddOne = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
 
-    const surveyId = Number(req.params.surveyId)
-    if (!surveyId || Number.isNaN(surveyId)) {
+    const survey_id = Number(req.params.surveyId)
+    if (Number.isNaN(survey_id)) {
         resData.status = STATUS_FAILED
-        resData.msg = '请提供 surveyId'
+        // 未提供问卷 id
+        resData.msg = 'api.error.not-survey-id'
         res.status(400).send(resData)
         return
     }
+    /** @type {ReqBodyAnswer} */
     const body = req.body
-    await insertOneAnswer(body, req.ip)
-    resData.msg = '你的回答已保存！'
+    await insertOneAnswer({
+        survey_id,
+        answerUserId: body.userId || 1,
+        spend_time: body.spendTime || -1,
+        answerStructureJson: body.answerStructureJson,
+        ip_from: getRequestIp(req),
+    })
 
     res.send(resData)
 })
