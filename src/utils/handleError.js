@@ -35,10 +35,12 @@ export function defaultHandler(err, req, res, _next) {
     if (err instanceof SqlError) {
         const resData = getRespondData('failed', CODE_ERROR, err.msg)
         res.status(err.status).send(resData)
+        return
     }
     if (err instanceof Error4xx) {
         const resData = getRespondData('failed', CODE_ERROR, err.msg)
         res.status(err.statusCode).send(resData)
+        return
     }
 
     console.error(err)
