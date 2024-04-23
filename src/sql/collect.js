@@ -69,6 +69,7 @@ export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => 
 
     sql = `
         select a.id             as id,
+               u.username       as user_name,
                questionnaire_id as survey_id,
                answer_user_id,
                is_valid,
@@ -80,7 +81,9 @@ export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => 
                b.updated_at     as updated_at
         from questionnaire_answer as a
                  join questionnaire_answer_detail as b
+                 join user as u
         where a.id = b.answer_id
+          and a.answer_user_id = u.id
           and a.questionnaire_id = ?;
     `
     values = [surveyId]
