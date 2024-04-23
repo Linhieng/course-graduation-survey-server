@@ -96,6 +96,7 @@ export const answerAddOne = asyncHandler(async (/** @type {ExpressRequest} */req
         spend_time: body.spendTime || -1,
         answerStructureJson: body.answerStructureJson,
         ip_from: getRequestIp(req),
+        user_agent: req.headers['user-agent'] || '',
     })
 
     res.send(resData)

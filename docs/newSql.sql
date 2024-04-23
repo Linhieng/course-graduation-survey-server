@@ -1,3 +1,17 @@
+-- 答案收集时，添加一个字段，计算用户的 user_agent
+ALTER TABLE questionnaire_answer
+    ADD user_agent VARCHAR(255) DEFAULT '' NOT NULL COMMENT '由服务器进行添加，前端不需要添加。';
+-- 这里添加一个字段后，旧数据似乎会自动提供默认值。
+
+
+
+
+
+
+
+
+
+-- 这个表设计的有问题，用户想要获取自己的访问量时，没办法直接通过这个表来实现！
 DROP TABLE IF EXISTS record_visit;
 CREATE TABLE record_visit
 (

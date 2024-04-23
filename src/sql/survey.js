@@ -96,12 +96,13 @@ export const getStatData = (surveyId) => useOneConn(async (conn) => {
 export const insertOneAnswer = ({
     survey_id, answerUserId, spend_time,
     ip_from, answerStructureJson,
+    user_agent,
 }) => useOneConn(async (conn) => {
     let result, sql, values
 
-    sql = 'INSERT INTO `questionnaire_answer` (questionnaire_id, answer_user_id, spend_time, ip_from) ' +
-        'VALUE (?, ?, ?, ?);'
-    values = [survey_id, answerUserId, spend_time, ip_from]
+    sql = 'INSERT INTO `questionnaire_answer` (questionnaire_id, answer_user_id, spend_time, ip_from, user_agent) ' +
+        'VALUE (?, ?, ?, ?, ?);'
+    values = [survey_id, answerUserId, spend_time, ip_from, user_agent]
     result = await conn.execute(sql, values)
     const answerId = result[0].insertId
 
