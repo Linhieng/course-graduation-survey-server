@@ -212,8 +212,8 @@ export const sqlAddOneVisitRecord = (/** @type {import('express').Request}*/req)
         value (?, ?, ?, ?, ?, ?, ?, ?)
     `
     values = [
-        req.params.surveyId || -1,
-        req.auth?.userId || 1,
+        isNaN(Number(req.params.surveyId)) || -1,
+        isNaN(Number(req.auth?.userId)) || 1,
         getRequestIp(req),
         req.headers['user-agent'],
         0, // 访问类型没想好，统一为 0

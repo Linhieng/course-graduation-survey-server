@@ -1,6 +1,54 @@
 import { useOneConn } from './usePool.js'
 
+/**
+ * 分页 + 条件获取问卷列表
+ * @param {SearchSurveyListByPageParams} param0
+ * @returns
+ */
+export const sqlSearchSurveyListByPage = ({
+    userId, pageStart, pageSize,
+    survey_name: title, survey_desc: comment, survey_status,
+    survey_create_range,
+}) => useOneConn(async (conn) => {
+    let sql, values, result
+    /** @type {survey_list: CollectSurveyItem[]} */
+    const res = {
+        survey_list: [],
+    }
 
+    const valid = survey_status === 'all' ? '' : survey_status === 'publish' ? '1' : '0'
+    sql = `
+        select ifnull(s.count_answer, 0) as collect_answer,
+               ifnull(s.count_visit, 0)  as collect_visited,
+               q.*
+        from questionnaire as q
+
+                 left join stat_count as s
+                           on q.id = s.survey_id
+
+        where q.creator_id = ?
+          and title like ?
+          and comment like ?
+          and is_draft = 0
+          and is_deleted = 0
+          and is_valid like ?
+        LIMIT ?, ?
+        ;
+    `
+    values = [userId,
+        `%${title}%`,
+        `%${comment}%`,
+        `%${valid}`,
+        '' + pageStart,
+        '' + pageSize,
+    ]
+    result = await conn.execute(sql, values)
+
+    res.survey_list = result[0]
+
+    return res
+
+})
 /**
  * 分页获取一份问卷的所有答案
  * @returns
