@@ -24,6 +24,7 @@ export const asyncHandler = requesthandler => (req, res, next) => {
  */
 export function defaultHandler(err, req, res, _next) {
     if (err.name === 'UnauthorizedError') {
+        // 前台会根据 403 和 api.error.token-invalid 字段判断是否需要重新登录，所以不要修改
         // 无效的 token
         const resData = getRespondData('failed', CODE_ERROR, 'api.error.token-invalid')
         res.status(403).send(resData)
