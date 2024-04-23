@@ -11,7 +11,23 @@ export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => us
         total: 0,
         pageStart,
         pageSize,
-        list: [],
+        title: '',
+        desc: '',
+        list: [
+            {
+                id: 1,
+                user_name: '匿名',
+                survey_id: 1,
+                answer_user_id: 1,
+                is_valid: 1,
+                spend_time: -1,
+                ip_from: '',
+                user_agent: '',
+                answer_structure_json: {},
+                created_at: '',
+                updated_at: '',
+            },
+        ],
     }
 
     sql = `
@@ -43,6 +59,11 @@ export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => us
     result = await conn.execute(sql, values)
     res.total = result[0][0].c
 
+    sql = 'SELECT * FROM questionnaire WHERE id = ? LIMIT 1;'
+    result = await conn.execute(sql, values)
+    res.title = result[0][0].title
+    res.desc = result[0][0].comment
+
 
     return res
 })
@@ -54,6 +75,8 @@ export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => 
     let sql, values, result
 
     const res = {
+        title: '',
+        desc: '',
         answerList: [{
             id: 0,
             survey_id: surveyId,
@@ -89,6 +112,11 @@ export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => 
     values = [surveyId]
     result = await conn.execute(sql, values)
     res.answerList = result[0]
+
+    sql = 'SELECT * FROM questionnaire WHERE id = ? LIMIT 1;'
+    result = await conn.execute(sql, values)
+    res.title = result[0][0].title
+    res.desc = result[0][0].comment
 
     return res
 })
