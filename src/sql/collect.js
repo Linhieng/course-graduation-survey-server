@@ -1,6 +1,50 @@
 import { useOneConn } from './usePool.js'
 
+
 /**
+ * 分页获取一份问卷的所有答案
+ * @returns
+ */
+export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => useOneConn(async (conn) => {
+    let sql, values, result
+    const res = {
+        sum_size: 0,
+        pageStart,
+        pageSize,
+        list: [],
+    }
+
+    sql = `
+        select a.id             as id,
+               questionnaire_id as survey_id,
+               answer_user_id,
+               is_valid,
+               spend_time,
+               ip_from,
+               user_agent,
+               structure_json   as answer_structure_json,
+               b.created_at     as created_at,
+               b.updated_at     as updated_at
+        from questionnaire_answer as a
+                 join questionnaire_answer_detail as b
+        where a.id = b.answer_id
+          and a.questionnaire_id = ?
+        limit ?, ?;
+          `
+    values = [surveyId, '' + pageStart, '' + pageSize]
+    result = await conn.execute(sql, values)
+    res.list = result[0]
+
+    sql = 'select COUNT(*) as c from questionnaire_answer as a where a.questionnaire_id = ?;'
+    values = [surveyId]
+    result = await conn.execute(sql, values)
+    res.sum_size = result[0][0].c
+
+
+    return res
+})
+/**
+ * 获取一份问卷的所有答案
  * @returns
  */
 export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => {

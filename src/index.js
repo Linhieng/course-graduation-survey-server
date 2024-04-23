@@ -39,7 +39,7 @@ import { CODE_ERROR } from './constants/response.js'
 import { useExpressJwt } from './auth/index.js'
 import multer from 'multer'
 import { statVisit } from './mid/stat.js'
-import { collectGetSurveyByID } from './routes/collect.js'
+import { collectGetSurveyByID, collectGetSurveyByIDPage } from './routes/collect.js'
 
 const port = 3000
 const app = express()
@@ -119,6 +119,7 @@ app.get('/api/stat/visit-survey-group-by-day', mockDelay, statVisitSurveyGroupBy
 
 // 收集到的回答
 app.get('/api/collect/:surveyId', mockDelay, collectGetSurveyByID)
+app.get('/api/collect/page/:surveyId', mockDelay, collectGetSurveyByIDPage)
 
 app.all('*', (req, res) => {
     const resData = getRespondData('failed', CODE_ERROR, 'api.error.url.404')
