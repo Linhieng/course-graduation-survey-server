@@ -8,7 +8,7 @@ import { useOneConn } from './usePool.js'
 export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => useOneConn(async (conn) => {
     let sql, values, result
     const res = {
-        sum_size: 0,
+        total: 0,
         pageStart,
         pageSize,
         list: [],
@@ -16,6 +16,7 @@ export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => us
 
     sql = `
         select a.id             as id,
+               u.username       as user_name,
                questionnaire_id as survey_id,
                answer_user_id,
                is_valid,
@@ -27,7 +28,9 @@ export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => us
                b.updated_at     as updated_at
         from questionnaire_answer as a
                  join questionnaire_answer_detail as b
+                 join user as u
         where a.id = b.answer_id
+          and a.answer_user_id = u.id
           and a.questionnaire_id = ?
         limit ?, ?;
           `
@@ -38,7 +41,7 @@ export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => us
     sql = 'select COUNT(*) as c from questionnaire_answer as a where a.questionnaire_id = ?;'
     values = [surveyId]
     result = await conn.execute(sql, values)
-    res.sum_size = result[0][0].c
+    res.total = result[0][0].c
 
 
     return res
