@@ -11,6 +11,42 @@ TODO: 考虑使用 deno 运行服务器？这样 ts 的问题是否能够得到�
     jsDoc 局限，没法报错。
     请求参数类型校验问题，这一块是否有轻量的对应库？或者自己实现。
 
+## 懵逼的 sql 语句
+
+```js
+    const valid = survey_status === 'all' ? '' : survey_status === 'publish' ? '1' : '0'
+    sql = `
+        select ifnull(s.count_answer, 0) as collect_answer,
+               ifnull(s.count_visit, 0)  as collect_visited,
+               q.*
+        from questionnaire as q
+
+                 left join stat_count as s
+                           on q.id = s.survey_id
+
+        where q.creator_id = ?
+          and title like ?
+          and comment like ?
+          and is_draft = 0
+          and is_deleted = 0
+          and is_valid like ?
+        LIMIT ?, ?
+        ;
+    `
+    values = [userId,
+        `%${title}%`,
+        `%${comment}%`,
+        `%${valid}`,
+        '' + pageStart,
+        '' + pageSize,
+    ]
+    result = await conn.execute(sql, values)
+
+```
+
+~~上面代码中，本以为通过 like，可以很方便的处理 valid 的三种情况，但结果却发现上面 sql 语句会修改 valid 的值？？？当我使用 `%1` 时，is_valid 就被改为 1，使用 `%0` 时，is_valid 就被改为 0。what？~~
+
+等等，代码没问题，是前端代码写错了……，而且只展示了两条数据，也没实现多页，所以导致我一直以为只有两条数据……
 
 ## sql 语句查询
 
