@@ -245,15 +245,15 @@ export const sqlStatSurveyClassifyEasy = (userId) => useOneConn(async (conn) => 
             SUM(IF(q.is_deleted = 1, 1, 0)) AS deleted_count,
             COUNT(*) AS total_count
         FROM questionnaire AS q
-        WHERE q.creator_id = 13;
+        WHERE q.creator_id = ?;
     `
     result = await conn.execute(sql, values)
 
-    res.draft_count = result[0][0].draft_count
-    res.invalid_count = result[0][0].invalid_count
-    res.valid_count = result[0][0].valid_count
-    res.deleted_count = result[0][0].deleted_count
-    res.total_count = result[0][0].total_count
+    res.draft_count = result[0][0].draft_count || 0
+    res.invalid_count = result[0][0].invalid_count || 0
+    res.valid_count = result[0][0].valid_count || 0
+    res.deleted_count = result[0][0].deleted_count || 0
+    res.total_count = result[0][0].total_count || 0
 
     return res
 })
