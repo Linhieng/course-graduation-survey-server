@@ -13,38 +13,99 @@ export const sqlSearchSurveyListByPage = ({
     let sql, values, result
     /** @type {survey_list: CollectSurveyItem[]} */
     const res = {
+        total: 0,
+        pageStart,
+        pageSize,
         survey_list: [],
     }
 
-    const valid = survey_status === 'all' ? '' : survey_status === 'publish' ? '1' : '0'
-    sql = `
-        select ifnull(s.count_answer, 0) as collect_answer,
-               ifnull(s.count_visit, 0)  as collect_visited,
-               q.*
-        from questionnaire as q
+    /** 前端是从 1 开始，但 sql 查询需要从 0 开始 */
+    pageStart = Math.max(0, pageStart - 1)
 
-                 left join stat_count as s
-                           on q.id = s.survey_id
+    const valid = survey_status === 'all' ? '' : survey_status === 'publish' ? '1' : '0'
+
+    // 虽然这样写很 low，但能实现功能。所以先这样吧，我的 sql 也不熟练
+    if (survey_create_range && survey_create_range[0] && survey_create_range[1]) {
+        sql = `
+            select ifnull(s.count_answer, 0) as collect_answer,
+                   ifnull(s.count_visit, 0)  as collect_visited,
+                   q.*
+            from questionnaire as q
+
+                     left join stat_count as s
+                               on q.id = s.survey_id
+
+            where q.creator_id = ?
+              and title like ?
+              and comment like ?
+              and is_draft = 0
+              and is_deleted = 0
+              and is_valid like ?
+              and q.created_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000)
+                LIMIT ?, ?
+            ;
+        `
+
+        values = [userId,
+            `%${title}%`,
+            `%${comment}%`,
+            `%${valid}`,
+            survey_create_range[0],
+            survey_create_range[1],
+            '' + pageStart,
+            '' + pageSize,
+        ]
+    } else {
+        sql = `
+            select ifnull(s.count_answer, 0) as collect_answer,
+                   ifnull(s.count_visit, 0)  as collect_visited,
+                   q.*
+            from questionnaire as q
+
+                     left join stat_count as s
+                               on q.id = s.survey_id
+
+            where q.creator_id = ?
+              and title like ?
+              and comment like ?
+              and is_draft = 0
+              and is_deleted = 0
+              and is_valid like ?
+            LIMIT ?, ?
+            ;
+        `
+
+        values = [userId,
+            `%${title}%`,
+            `%${comment}%`,
+            `%${valid}`,
+            '' + pageStart,
+            '' + pageSize,
+        ]
+    }
+
+    result = await conn.execute(sql, values)
+    res.survey_list = result[0]
+
+    sql = `
+        select count(*) as c
+        from questionnaire as q
 
         where q.creator_id = ?
           and title like ?
-          and comment like ?
           and is_draft = 0
           and is_deleted = 0
+          and comment like ?
           and is_valid like ?
-        LIMIT ?, ?
         ;
     `
     values = [userId,
         `%${title}%`,
         `%${comment}%`,
         `%${valid}`,
-        '' + pageStart,
-        '' + pageSize,
     ]
     result = await conn.execute(sql, values)
-
-    res.survey_list = result[0]
+    res.total = result[0][0].c
 
     return res
 
