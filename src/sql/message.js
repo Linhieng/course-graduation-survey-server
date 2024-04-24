@@ -6,14 +6,14 @@ import { useOneConn } from './usePool.js'
 
 /**
  * 批量修改消息的状态，标记已读或未读
- * @param {number[]} id_arr 要变更的 id
+ * @param {number[]} ids 要变更的 id
  * @param {number} status
  * @returns
  */
-export const sqlSetMessageStatus = (id_arr, status = 1) => useOneConn(async (conn) => {
+export const sqlSetMessageStatus = (ids, status = 1) => useOneConn(async (conn) => {
     let sql, values
-    sql = `update user_message set message_status = ? where id in (${Array(id_arr.length).fill('?').join(',')});`
-    values = [status, ...id_arr]
+    sql = `update user_message set message_status = ? where id in (${Array(ids.length).fill('?').join(',')});`
+    values = [status, ...ids]
     await conn.execute(sql, values)
 })
 
