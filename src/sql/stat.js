@@ -223,3 +223,37 @@ export const sqlAddOneVisitRecord = (/** @type {import('express').Request}*/req)
     ]
     conn.execute(sql, values)
 })
+
+
+/**
+ * 只统计各类问卷的数量，没有其他信息
+ */
+export const sqlStatSurveyClassifyEasy = (userId) => useOneConn(async (conn) => {
+    let sql, values = [userId], result
+    const res = {
+        draft_count: 0,
+        invalid_count: 0,
+        valid_count: 0,
+        deleted_count: 0,
+        total_count: 0,
+    }
+    sql = `
+        SELECT
+            SUM(IF(q.is_draft = 1, 1, 0)) AS draft_count,
+            SUM(IF(q.is_draft = 0 AND q.is_valid = 0, 1, 0)) AS invalid_count,
+            SUM(IF(q.is_draft = 0 AND q.is_valid = 1, 1, 0)) AS valid_count,
+            SUM(IF(q.is_deleted = 1, 1, 0)) AS deleted_count,
+            COUNT(*) AS total_count
+        FROM questionnaire AS q
+        WHERE q.creator_id = 13;
+    `
+    result = await conn.execute(sql, values)
+
+    res.draft_count = result[0][0].draft_count
+    res.invalid_count = result[0][0].invalid_count
+    res.valid_count = result[0][0].valid_count
+    res.deleted_count = result[0][0].deleted_count
+    res.total_count = result[0][0].total_count
+
+    return res
+})

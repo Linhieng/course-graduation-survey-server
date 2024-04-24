@@ -33,6 +33,7 @@ import {
     statCountStat,
     statGroupByDay,
     statVisitSurveyGroupByDay,
+    statSurveyClassifyEasy,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -116,6 +117,7 @@ app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 app.get('/api/stat/count-stat', mockDelay, statCountStat)
 app.get('/api/stat/group-by-day', mockDelay, statGroupByDay)
 app.get('/api/stat/visit-survey-group-by-day', mockDelay, statVisitSurveyGroupByDay)
+app.get('/api/stat/survey-classify-easy', mockDelay, statSurveyClassifyEasy)
 
 // 收集到的回答
 app.get('/api/collect/:surveyId', mockDelay, collectGetSurveyByID)
