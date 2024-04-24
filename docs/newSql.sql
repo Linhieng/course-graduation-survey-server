@@ -1,3 +1,28 @@
+DROP TABLE IF EXISTS user_message;
+CREATE TABLE user_message
+(
+    id             INT AUTO_INCREMENT            NOT NULL COMMENT '主键，自增',
+    user_id        INT                           NOT NULL COMMENT '该消息属于哪个用户',
+    message_type   TINYINT      DEFAULT 1        NOT NULL COMMENT '消息类型， 1 表示新增一份回答。先这样吧',
+    message_from   VARCHAR(100) DEFAULT 'system' NOT NULL COMMENT '消息发起者，默认是系统',
+    content        VARCHAR(255)                  NOT NULL COMMENT '消息内容',
+    survey_id      INT                           NOT NULL COMMENT '因为这个表我是用于通知用户某个问卷有了新的回答，所以添加问卷 id',
+    answer_id      INT                           NOT NULL COMMENT '因为这个表我是用于通知用户某个问卷有了新的回答，所以添加回答 id',
+    message_status TINYINT      DEFAULT 0        NOT NULL COMMENT '是否已读，0 表示未读，1 表示已读',
+    created_at     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间，自动赋值',
+    updated_at     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间，自动赋值',
+    PRIMARY KEY (id), -- 主键添加在后面，更美观
+    FOREIGN KEY (user_id) REFERENCES user (id)
+) COMMENT = '用户消息表'
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4;
+
+
+
+
+
+
+
 -- 答案收集时，添加一个字段，计算用户的 user_agent
 ALTER TABLE questionnaire_answer
     ADD user_agent VARCHAR(255) DEFAULT '' NOT NULL COMMENT '由服务器进行添加，前端不需要添加。';

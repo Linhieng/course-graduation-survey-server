@@ -100,6 +100,12 @@ export const insertOneAnswer = ({
 }) => useOneConn(async (conn) => {
     let result, sql, values
 
+    // 获取问卷所属用户
+    sql = 'select creator_id as userId from questionnaire where id = ?'
+    values = [survey_id]
+    result = await conn.execute(sql, values)
+    const userId = result[0][0].userId
+
     sql = 'INSERT INTO `questionnaire_answer` (questionnaire_id, answer_user_id, spend_time, ip_from, user_agent) ' +
         'VALUE (?, ?, ?, ?, ?);'
     values = [survey_id, answerUserId, spend_time, ip_from, user_agent]
@@ -125,6 +131,13 @@ export const insertOneAnswer = ({
         result = await conn.execute(sql, values)
     }
 
+    // 添加到消息
+    sql = `
+        INSERT INTO user_message(user_id, content, survey_id, answer_id)
+        value (?, ?, ?, ?)
+    `
+    values = [userId, '收到一份新的回答', survey_id, answerId]
+    await conn.execute(sql, values)
 })
 
 

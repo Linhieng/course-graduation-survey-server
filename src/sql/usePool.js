@@ -12,7 +12,7 @@ let connPool
  *
  * @param {DatabaseConfig} param
  */
-export function initConnPool({host, user, password, database}) {
+export function initConnPool({ host, user, password, database }) {
     try {
         connPool = mysql.createPool({ host, user, password, database })
     } catch (error) {

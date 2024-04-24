@@ -42,6 +42,7 @@ import { useExpressJwt } from './auth/index.js'
 import multer from 'multer'
 import { statVisit } from './mid/stat.js'
 import { collectGetSurveyByID, collectGetSurveyByIDPage, searchSurveyListByPage } from './routes/collect.js'
+import { getUnreadMessage, setMessageRead, setMessageStatus, setMessageUnread } from './routes/message.js'
 
 const port = 3000
 const app = express()
@@ -126,6 +127,12 @@ app.get('/api/collect/:surveyId', mockDelay, collectGetSurveyByID)
 // 这里得在前面！很明显这个路由设计得不好
 app.get('/api/collect/page/survey_list', mockDelay, searchSurveyListByPage)
 app.get('/api/collect/page/:surveyId', mockDelay, collectGetSurveyByIDPage)
+
+// 获取用户消息列表
+app.get('/api/message/unread', mockDelay, getUnreadMessage)
+app.post('/api/message/set-read', mockDelay, setMessageRead)
+app.post('/api/message/set-unread', mockDelay, setMessageUnread)
+app.post('/api/message/set-status', mockDelay, setMessageStatus)
 
 app.all('*', (req, res) => {
     const resData = getRespondData('failed', CODE_ERROR, 'api.error.url.404')
