@@ -94,16 +94,16 @@ export const sqlGetCountStat = (userId) => useOneConn(async (conn) => {
     let result, sql, values
 
     const res = {
-        count_all_visit: -1,
-        count_all_answer: -1,
-        count_all_survey: -1,
-        count_draft_survey: -1,
-        count_publish_survey: -1,
-        count_stop_survey: -1,
+        count_all_visit: 0,
+        count_all_answer: 0,
+        count_all_survey: 0,
+        count_draft_survey: 0,
+        count_publish_survey: 0,
+        count_stop_survey: 0,
 
-        today_count_create_survey: -1,
-        today_count_publish_survey: -1,
-        today_count_answer_survey: -1,
+        today_count_create_survey: 0,
+        today_count_publish_survey: 0,
+        today_count_answer_survey: 0,
     }
 
     sql = 'SELECT sum(stat.count_visit) as all_count_visit, sum(stat.count_answer) as all_count_answer ' +
