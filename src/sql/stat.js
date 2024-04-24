@@ -257,3 +257,84 @@ export const sqlStatSurveyClassifyEasy = (userId) => useOneConn(async (conn) => 
 
     return res
 })
+
+
+/**
+ * 一次性获取所有吧，这样就不用前端多次请求了。
+ * @param {TypeID} userId
+ * @param {number|undefined} numberLimit
+ * @returns
+ */
+export const sqlStatPopularSurveyCountAnswer = (userId, numberLimit = 5) => useOneConn(async (conn) => {
+    let sql, values = [userId, '' + numberLimit], result
+    const res = {
+        allRank: [{
+            id: 0,
+            title: '',
+            rank: 0,
+            count_answer: 0,
+        }],
+        publishRank: [],
+        stopRank: [],
+    }
+
+    sql = `
+        SELECT ifnull(s.count_answer, 0) as count_answer,
+               q.id                      as id,
+               q.title                   as title,
+               q.created_at              as created_at
+        from questionnaire as q
+                 left join stat_count as s on q.id = s.survey_id
+        where q.creator_id = ?
+          and q.is_draft = 0
+          and q.is_deleted = 0
+          and q.is_valid = 1
+        order by s.count_answer DESC, q.created_at DESC
+        LIMIT ?
+        ;
+    `
+    result = await conn.execute(sql, values)
+    res.publishRank = result[0]
+    res.publishRank.forEach((item, i) => item.rank = i + 1)
+
+
+    sql = `
+        SELECT ifnull(s.count_answer, 0) as count_answer,
+               q.id                      as id,
+               q.title                   as title,
+               q.created_at              as created_at
+        from questionnaire as q
+                 left join stat_count as s on q.id = s.survey_id
+        where q.creator_id = ?
+          and q.is_draft = 0
+          and q.is_deleted = 0
+          and q.is_valid = 0
+        order by s.count_answer DESC, q.created_at DESC
+        LIMIT ?
+        ;
+    `
+    result = await conn.execute(sql, values)
+    res.stopRank = result[0]
+    res.stopRank.forEach((item, i) => item.rank = i + 1)
+
+
+    sql = `
+        SELECT ifnull(s.count_answer, 0) as count_answer,
+               q.id                      as id,
+               q.title                   as title,
+               q.created_at              as created_at
+        from questionnaire as q
+                 left join stat_count as s on q.id = s.survey_id
+        where q.creator_id = ?
+          and q.is_draft = 0
+          and q.is_deleted = 0
+        order by s.count_answer DESC, q.created_at DESC
+        LIMIT ?
+        ;
+    `
+    result = await conn.execute(sql, values)
+    res.allRank = result[0]
+    res.allRank.forEach((item, i) => item.rank = i + 1)
+
+    return res
+})

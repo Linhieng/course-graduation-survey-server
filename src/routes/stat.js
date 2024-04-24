@@ -1,4 +1,4 @@
-import { sqlGetCountStat, sqlStatGroupByDay, sqlStatSurveyClassifyEasy, sqlStatSurveyVisitGroupByDay } from '../sql/stat.js'
+import { sqlGetCountStat, sqlStatGroupByDay, sqlStatPopularSurveyCountAnswer, sqlStatSurveyClassifyEasy, sqlStatSurveyVisitGroupByDay } from '../sql/stat.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
 export const statCountStat = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
@@ -25,5 +25,14 @@ export const statSurveyClassifyEasy = asyncHandler(async (/** @type {ExpressRequ
     const resData = getRespondData()
     const userId = req.auth.userId
     resData.data = await sqlStatSurveyClassifyEasy(userId)
+    res.send(resData)
+})
+
+/** 获取用户问卷和回答数量，并排序返回 */
+export const statPopularSurveyCountAnswer = asyncHandler(async (/** @type {import("express").Request} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = req.auth.userId
+    const numberLimit = Number(req.params.limitNumber) || undefined
+    resData.data = await sqlStatPopularSurveyCountAnswer(userId, numberLimit)
     res.send(resData)
 })
