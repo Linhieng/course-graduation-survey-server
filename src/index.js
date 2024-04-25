@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -52,6 +53,10 @@ initConnPool({
     password: '1234',
     database: 'survey',
 })
+
+if (!fs.existsSync('src/auth/revokedToken')) {
+    fs.appendFileSync('src/auth/revokedToken', '')
+}
 
 // 捕获全局未处理的 Promise rejection
 process.on('unhandledRejection', (reason, promise) => {
