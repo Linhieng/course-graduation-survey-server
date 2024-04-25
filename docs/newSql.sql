@@ -1,3 +1,14 @@
+-- user-agent 的字段居然太短了！
+alter table record_visit
+    modify user_agent varchar(512) not null comment '浏览器的 user_agent 字符串';
+alter table questionnaire_answer
+    modify user_agent varchar(512) not null comment '由服务器进行添加，前端不需要添加。';
+
+
+
+
+
+
 DROP TABLE IF EXISTS user_message;
 CREATE TABLE user_message
 (
