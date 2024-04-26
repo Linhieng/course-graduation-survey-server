@@ -10,8 +10,9 @@ import {
     sqlUpdateAndPublishSurvey,
     sqlGetSurveyAllTemplate,
     sqlGetSurveyMyTemplate,
+    sqlSetSurveyTemplateShare,
 } from '../sql/survey.js'
-import { asyncHandler, getRespondData } from '../utils/index.js'
+import { Error4xx, asyncHandler, getRespondData } from '../utils/index.js'
 
 /**
  * 缓存用户问卷，如果问卷不存在，则自动创建问卷。
@@ -358,5 +359,33 @@ export const getSurveyAllTemplate = asyncHandler(async (/** @type {ExpressReques
     const resData = getRespondData()
     const { pageStart, pageSize } = req.query
     resData.data = await sqlGetSurveyAllTemplate(pageStart, pageSize)
+    res.send(resData)
+})
+
+export const setSurveyTemplateShare = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const surveyId = Number(req.params.surveyId)
+    if (isNaN(surveyId)) {
+        throw new Error4xx(400, '问卷 id 格式错误')
+    }
+    resData.data = await sqlSetSurveyTemplateShare(req.auth.userId, surveyId, 2)
+    res.send(resData)
+})
+export const setSurveyTemplateUnshare = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const surveyId = Number(req.params.surveyId)
+    if (isNaN(surveyId)) {
+        throw new Error4xx(400, '问卷 id 格式错误')
+    }
+    resData.data = await sqlSetSurveyTemplateShare(req.auth.userId, surveyId, 1)
+    res.send(resData)
+})
+export const toggleSurveyTemplateUnshare = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const surveyId = Number(req.params.surveyId)
+    if (isNaN(surveyId)) {
+        throw new Error4xx(400, '问卷 id 格式错误')
+    }
+    resData.data = await sqlSetSurveyTemplateShare(req.auth.userId, surveyId)
     res.send(resData)
 })

@@ -39,6 +39,9 @@ import {
     getSurveyAllTemplate,
     getSurveyMyTemplate,
     getUserAvatar,
+    setSurveyTemplateShare,
+    setSurveyTemplateUnshare,
+    toggleSurveyTemplateUnshare,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -121,6 +124,10 @@ app.post('/api/survey/recover/:surveyId', mockDelay, recoverSurvey)
 // 获取问卷模版
 app.get('/api/survey/my-template', mockDelay, getSurveyMyTemplate)
 app.get('/api/survey/all-template', mockDelay, getSurveyAllTemplate)
+// 这个 api 也可以用于设置问卷为模版
+app.post('/api/survey/template/set-share/:surveyId', mockDelay, setSurveyTemplateShare)
+app.post('/api/survey/template/set-unshare/:surveyId', mockDelay, setSurveyTemplateUnshare)
+app.post('/api/survey/template/toggle-share/:surveyId', mockDelay, toggleSurveyTemplateUnshare)
 
 
 // 回答

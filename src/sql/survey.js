@@ -1,6 +1,31 @@
 import { useOneConn } from './index.js'
 
 /**
+ *
+ * @param {number} userId 只能修改自己的问卷
+ * @param {number} surveyId
+ * @param {number} is_share  1 表示不共享，2 表示共享
+ * @returns
+ */
+export const sqlSetSurveyTemplateShare = (userId, surveyId, is_share) => useOneConn(async (conn) => {
+    let sql, values, result
+    // 未提供时，默认是 toggle
+    if (is_share === undefined) {
+        sql = 'select is_template from questionnaire where id = ? and creator_id = ?;'
+        values = [surveyId, userId]
+        result = await conn.execute(sql, values)
+        is_share = result[0][0].is_template === 1 ? 2 : 1
+    }
+
+    sql = 'update questionnaire set is_template = ? where id = ? and creator_id = ?;'
+    values = ['' + is_share, surveyId, userId]
+    await conn.execute(sql, values)
+    return {
+        is_template: is_share,
+    }
+})
+
+/**
  * 获取当前系统中所拥有的所有问卷模版。可以分页，也可以不分页
  *
  * @param {undefined|number} pageStart 前端是 1 开始，数据库得从 0 开始
