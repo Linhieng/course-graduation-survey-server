@@ -1,8 +1,23 @@
 import { CODE_FAILED, CODE_SUCCEED, STATUS_SUCCEED } from '../constants/index.js'
 import { insertOne, selectPasswordByUsername, sqlCHangePassword, sqlGetUserInfo, sqlGetUserLog, sqlUpdateUserInfo } from '../sql/index.js'
-import { userActionLog, asyncHandler, encrypt, getRespondData } from '../utils/index.js'
+import { userActionLog, asyncHandler, encrypt, getRespondData, Error4xx } from '../utils/index.js'
 import { addRevokedToken, signAuth } from '../auth/index.js'
 import convertToCamelCase from '../utils/camelCase.js'
+
+/**
+ * 获取用户头像，这是公开的接口
+ */
+export const getUserAvatar = asyncHandler(async (/** @type {import('express').Request} */ req, res) => {
+    const userId = Number(req.params.userId)
+    if (isNaN(userId)) {
+        throw new Error4xx(400, '用户 id 错误')
+    }
+    const user = await sqlGetUserInfo(userId)
+
+    const resData = getRespondData()
+    resData.data = { avatar: user.avatar }
+    res.send(resData)
+})
 
 export const getActionLog = asyncHandler(async (/** @type {import('express').Request} */ req, res) => {
     let { startPage, pageSize } = req.query

@@ -38,6 +38,7 @@ import {
     statPopularSurveyCountAnswer,
     getSurveyAllTemplate,
     getSurveyMyTemplate,
+    getUserAvatar,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -96,6 +97,7 @@ app.post('/api/user/info', mockDelay, getUserInfo)
 app.post('/api/user/update-info', mockDelay, updateUserInfo)
 app.post('/api/user/modify-password', mockDelay, modifyPassword)
 app.post('/api/user/action-log', mockDelay, getActionLog)
+app.get('/api/user/get-avatar/:userId', mockDelay, getUserAvatar)
 
 
 // 问卷

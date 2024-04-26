@@ -43,6 +43,10 @@ export function useExpressJwt(app) {
                 url: /^\/api\/answer\/.*/,
                 methods: ['GET', 'POST'],
             },
+            {
+                url: /^\/api\/user\/get-avatar\/\d+/,
+                methods: ['GET'],
+            },
         ],
     }))
 }
