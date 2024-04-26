@@ -8,6 +8,8 @@ import {
     sqlCreateNewSurvey, sqlUpdateSurvey, sqlGetSurveyStat,
     sqlStopSurvey, sqlDelSurvey, sqlRecoverSurvey,
     sqlUpdateAndPublishSurvey,
+    sqlGetSurveyAllTemplate,
+    sqlGetSurveyMyTemplate,
 } from '../sql/survey.js'
 import { asyncHandler, getRespondData } from '../utils/index.js'
 
@@ -344,4 +346,17 @@ export const recoverSurvey = asyncHandler(async (/** @type {ExpressRequest} */re
 
     res.send(resData)
 })
-//
+
+
+export const getSurveyMyTemplate = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const { pageStart, pageSize } = req.query
+    resData.data = await sqlGetSurveyMyTemplate(req.auth.userId, pageStart, pageSize)
+    res.send(resData)
+})
+export const getSurveyAllTemplate = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const { pageStart, pageSize } = req.query
+    resData.data = await sqlGetSurveyAllTemplate(pageStart, pageSize)
+    res.send(resData)
+})

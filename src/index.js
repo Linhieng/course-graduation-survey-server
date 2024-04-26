@@ -36,6 +36,8 @@ import {
     statVisitSurveyGroupByDay,
     statSurveyClassifyEasy,
     statPopularSurveyCountAnswer,
+    getSurveyAllTemplate,
+    getSurveyMyTemplate,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -114,6 +116,9 @@ app.post('/api/survey/publish/:surveyId', mockDelay, publishSurvey)
 app.post('/api/survey/stop/:surveyId', mockDelay, stopSurvey)
 app.post('/api/survey/del/:surveyId', mockDelay, delSurvey)
 app.post('/api/survey/recover/:surveyId', mockDelay, recoverSurvey)
+// 获取问卷模版
+app.get('/api/survey/my-template', mockDelay, getSurveyMyTemplate)
+app.get('/api/survey/all-template', mockDelay, getSurveyAllTemplate)
 
 
 // 回答

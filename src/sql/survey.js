@@ -1,6 +1,72 @@
 import { useOneConn } from './index.js'
 
 /**
+ * 获取当前系统中所拥有的所有问卷模版。可以分页，也可以不分页
+ *
+ * @param {undefined|number} pageStart 前端是 1 开始，数据库得从 0 开始
+ * @param {undefined|number} pageSize
+ * @returns
+ */
+export const sqlGetSurveyAllTemplate = (pageStart, pageSize) => useOneConn(async (conn) => {
+    let sql, values, result
+    const res = {
+        count: 0,
+        pageStart: pageStart || 1,
+        pageSize: pageSize,
+        surveyTemplate: [],
+    }
+    if (pageStart && pageSize) {
+        sql = 'SELECT * FROM questionnaire where is_template = ? LIMIT ?, ?'
+        values = [2, '' + (pageStart - 1), '' + pageSize]
+    } else {
+        sql = 'SELECT * FROM questionnaire where is_template = ?'
+        values = [2]
+    }
+    result = await conn.execute(sql, values)
+    res.surveyTemplate = result[0]
+
+    sql = 'SELECT COUNT(*) as c  FROM questionnaire where is_template = ?'
+    values = [2]
+    result = await conn.execute(sql, values)
+    res.count = result[0][0].c
+    if (!pageSize) res.pageSize = res.count
+    return res
+})
+/**
+ * 只获取用户的问卷模版
+ *
+ * @param {number} userId
+ * @param {undefined|number} pageStart 前端是 1 开始，数据库得从 0 开始
+ * @param {undefined|number} pageSize
+ * @returns
+ */
+export const sqlGetSurveyMyTemplate = (userId, pageStart, pageSize) => useOneConn(async (conn) => {
+    let sql, values, result
+    const res = {
+        count: 0,
+        pageStart: pageStart || 1,
+        pageSize: pageSize,
+        surveyTemplate: [],
+    }
+    if (pageStart && pageSize) {
+        sql = 'SELECT * FROM questionnaire where is_template = ? and creator_id = ? LIMIT ?, ?'
+        values = [2, userId, '' + (pageStart - 1), '' + pageSize]
+    } else {
+        sql = 'SELECT * FROM questionnaire where is_template = ? and creator_id = ?'
+        values = [2, userId]
+    }
+    result = await conn.execute(sql, values)
+    res.surveyTemplate = result[0]
+
+    sql = 'SELECT COUNT(*) as c  FROM questionnaire where is_template = ? and creator_id = ?'
+    values = [2, userId]
+    result = await conn.execute(sql, values)
+    res.count = result[0][0].c
+    if (!pageSize) res.pageSize = res.count
+    return res
+})
+
+/**
  * 获取相关问卷统计信息。暂时就这么多吧。
  *
  * @param {*} userId
