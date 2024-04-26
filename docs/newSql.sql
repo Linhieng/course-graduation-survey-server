@@ -1,3 +1,11 @@
+-- 问卷可以提供问卷类型
+ALTER TABLE questionnaire
+    ADD is_template TINYINT DEFAULT 0 NOT NULL COMMENT '是否是模版，0 表示不是，1 表示是模版，2 表示是模版，并且是共享的。';
+-- 问卷可以提供问卷类型
+ALTER TABLE questionnaire
+    ADD survey_type TINYINT DEFAULT 0 NOT NULL COMMENT '问卷类型，0 表示常规问卷，1表示调研问卷，2表示心理问卷，等等';
+
+
 -- user-agent 的字段居然太短了！
 alter table record_visit
     modify user_agent varchar(512) not null comment '浏览器的 user_agent 字符串';
