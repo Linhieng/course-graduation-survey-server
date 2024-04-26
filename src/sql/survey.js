@@ -74,16 +74,16 @@ export const sqlGetSurveyMyTemplate = (userId, pageStart, pageSize) => useOneCon
         surveyTemplate: [],
     }
     if (pageStart && pageSize) {
-        sql = 'SELECT * FROM questionnaire where is_template = ? and creator_id = ? LIMIT ?, ?'
-        values = [2, userId, '' + (pageStart - 1), '' + pageSize]
+        sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ? LIMIT ?, ?'
+        values = [userId, '' + (pageStart - 1), '' + pageSize]
     } else {
-        sql = 'SELECT * FROM questionnaire where is_template = ? and creator_id = ?'
-        values = [2, userId]
+        sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ?'
+        values = [userId]
     }
     result = await conn.execute(sql, values)
     res.surveyTemplate = result[0]
 
-    sql = 'SELECT COUNT(*) as c  FROM questionnaire where is_template = ? and creator_id = ?'
+    sql = 'SELECT COUNT(*) as c  FROM questionnaire where is_template != 0 and creator_id = ?'
     values = [2, userId]
     result = await conn.execute(sql, values)
     res.count = result[0][0].c
