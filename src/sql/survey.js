@@ -117,7 +117,7 @@ export const sqlGetSurveyMyTemplate = (userId, pageStart, pageSize) => useOneCon
     res.surveyTemplate = result[0]
 
     sql = 'SELECT COUNT(*) as c  FROM questionnaire where is_template != 0 and creator_id = ?'
-    values = [2, userId]
+    values = [userId]
     result = await conn.execute(sql, values)
     res.count = result[0][0].c
     if (!pageSize) res.pageSize = res.count
