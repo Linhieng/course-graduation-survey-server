@@ -60,7 +60,13 @@ export const updateAndPublishSurvey = asyncHandler(async (/** @type {ExpressRequ
 
     if (!surveyId) {
         // 自动创建问卷
-        surveyId = await sqlCreateNewSurvey(userId, survey.title, survey.comment, survey.structure_json)
+        surveyId = await sqlCreateNewSurvey({
+            userId, title: survey.title,
+            comment: survey.comment,
+            survey_type: survey.survey_type,
+            is_template: survey.is_template,
+            structure_json: survey.structure_json,
+        })
     }
 
     // TODO: 不允许编辑非草稿问卷。
