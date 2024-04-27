@@ -106,11 +106,9 @@ export const getSurveyById = asyncHandler(async (/** @type {ExpressRequest} */re
         return
     }
 
-    /** @type {ResDataOneSurvey} */
     const surveyData = {
-        id: survey.id,
-        title: survey.title,
-        comment: survey.comment,
+        // 这里直接全部返回，后续修改 survey 表时就不会报错，一个一个属性的写法不行！
+        ...survey,
         structure_json: surveyDetail.structure_json,
     }
     resData.data = surveyData
