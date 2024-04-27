@@ -19,9 +19,6 @@ export const sqlSearchSurveyListByPage = ({
         survey_list: [],
     }
 
-    /** 前端是从 1 开始，但 sql 查询需要从 0 开始 */
-    pageStart = Math.max(0, pageStart - 1)
-
     const valid = survey_status === 'all' ? '' : survey_status === 'publish' ? '1' : '0'
 
     // 虽然这样写很 low，但能实现功能。所以先这样吧，我的 sql 也不熟练
@@ -52,7 +49,7 @@ export const sqlSearchSurveyListByPage = ({
             `%${valid}`,
             survey_create_range[0],
             survey_create_range[1],
-            '' + pageStart,
+            '' + ((pageStart - 1) * pageSize),
             '' + pageSize,
         ]
     } else {
@@ -79,7 +76,7 @@ export const sqlSearchSurveyListByPage = ({
             `%${title}%`,
             `%${comment}%`,
             `%${valid}`,
-            '' + pageStart,
+            '' + ((pageStart - 1) * pageSize),
             '' + pageSize,
         ]
     }
@@ -159,7 +156,7 @@ export const sqlCollectGetSurveyByIDPage = (surveyId, pageStart, pageSize) => us
           and a.questionnaire_id = ?
         limit ?, ?;
           `
-    values = [surveyId, '' + pageStart, '' + pageSize]
+    values = [surveyId, '' + ((pageStart - 1) * pageSize), '' + pageSize]
     result = await conn.execute(sql, values)
     res.list = result[0]
 

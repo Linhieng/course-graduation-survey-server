@@ -75,7 +75,7 @@ export const sqlGetSurveyAllTemplate = (pageStart, pageSize) => useOneConn(async
     }
     if (pageStart && pageSize) {
         sql = 'SELECT * FROM questionnaire where is_template = ? LIMIT ?, ?'
-        values = [2, '' + (pageStart - 1), '' + pageSize]
+        values = [2, '' + ((pageStart - 1) * pageSize), '' + pageSize]
     } else {
         sql = 'SELECT * FROM questionnaire where is_template = ?'
         values = [2]
@@ -94,7 +94,7 @@ export const sqlGetSurveyAllTemplate = (pageStart, pageSize) => useOneConn(async
  * 只获取用户的问卷模版
  *
  * @param {number} userId
- * @param {undefined|number} pageStart 前端是 1 开始，数据库得从 0 开始
+ * @param {undefined|number} pageStart 页数，从 1 开始
  * @param {undefined|number} pageSize
  * @returns
  */
@@ -102,13 +102,13 @@ export const sqlGetSurveyMyTemplate = (userId, pageStart, pageSize) => useOneCon
     let sql, values, result
     const res = {
         count: 0,
-        pageStart: pageStart || 1,
+        pageStart: pageStart,
         pageSize: pageSize,
         surveyTemplate: [],
     }
     if (pageStart && pageSize) {
         sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ? LIMIT ?, ?'
-        values = [userId, '' + (pageStart - 1), '' + pageSize]
+        values = [userId, '' + ((pageStart - 1) * pageSize), '' + pageSize]
     } else {
         sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ?'
         values = [userId]
