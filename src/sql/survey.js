@@ -1,4 +1,37 @@
+import { SqlError } from '../utils/handleError.js'
 import { useOneConn } from './index.js'
+
+/**
+ * 获取一份模版问卷，如果 userId 等于要获取的问卷的创建者，则返回问卷模板。
+ * 否则需要问卷为公开才可获取。
+ * @param {*} userId
+ * @param {*} surveyId
+ * @param {*} is_share
+ * @returns
+ */
+export const sqlGetShareSurveyTemplate = (userId, surveyId) => useOneConn(async (conn) => {
+    let sql, values, result
+    let survey
+
+    sql = `
+        select creator_id, is_template, q.*, d.structure_json from questionnaire as q
+        join questionnaire_detail as d on q.id = d.questionnaire_id
+                                   where q.id = ?;
+    `
+    values = [surveyId]
+    result = await conn.execute(sql, values)
+
+    if (result[0][0].creator_id === userId || result[0][0].is_template === 2) {
+        survey = result[0][0]
+        // 这里可以继续为其基于该模版创建一份问卷，然后直接返回。
+        // 但也可以由前端进行创建。
+    } else {
+        throw new SqlError(403, '无权限')
+    }
+
+    return survey
+
+})
 
 /**
  *
@@ -453,10 +486,10 @@ export const sqlUpdateSurvey = (surveyId, title, comment, structure_json) => use
 })
 
 /** 创建一份新的问卷 */
-export const sqlCreateNewSurvey = (userId, title, comment, structure_json) => useOneConn(async (conn) => {
+export const sqlCreateNewSurvey = ({ userId, title, comment, structure_json, survey_type, is_template }) => useOneConn(async (conn) => {
     let sql, values, result
-    sql = 'INSERT INTO `questionnaire` (creator_id, title, comment) value (?, ?, ?)'
-    values = [userId, title, comment]
+    sql = 'INSERT INTO `questionnaire` (creator_id, title, comment, survey_type, is_template) value (?, ?, ?, ?, ?)'
+    values = [userId, title, comment, survey_type, is_template]
     result = await conn.execute(sql, values)
     const surveyId = result[0].insertId
     // 同时初始化一条问卷具体内容信息

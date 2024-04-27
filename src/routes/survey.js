@@ -11,6 +11,7 @@ import {
     sqlGetSurveyAllTemplate,
     sqlGetSurveyMyTemplate,
     sqlSetSurveyTemplateShare,
+    sqlGetShareSurveyTemplate,
 } from '../sql/survey.js'
 import { Error4xx, asyncHandler, getRespondData } from '../utils/index.js'
 
@@ -28,7 +29,11 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
 
     if (!surveyId) {
         // 自动创建问卷
-        surveyId = await sqlCreateNewSurvey(userId, survey.title, survey.comment, survey.structure_json)
+        surveyId = await sqlCreateNewSurvey({
+            userId, title: survey.title, comment: survey.comment, structure_json: survey.structure_json,
+            survey_type: survey.survey_type,
+            is_template: survey.is_template,
+        })
     } else {
         // TODO: 不允许编辑非草稿问卷。
         await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
@@ -351,13 +356,21 @@ export const recoverSurvey = asyncHandler(async (/** @type {ExpressRequest} */re
 
 export const getSurveyMyTemplate = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
-    const { pageStart, pageSize } = req.query
+    const pageStart = Number(req.query.pageStart)
+    const pageSize = Number(req.query.pageSize)
+    if (isNaN(pageStart) || isNaN(pageSize)) {
+        throw new Error4xx(400, '请求的分页参数格式错误')
+    }
     resData.data = await sqlGetSurveyMyTemplate(req.auth.userId, pageStart, pageSize)
     res.send(resData)
 })
 export const getSurveyAllTemplate = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
     const resData = getRespondData()
-    const { pageStart, pageSize } = req.query
+    const pageStart = Number(req.query.pageStart)
+    const pageSize = Number(req.query.pageSize)
+    if (isNaN(pageStart) || isNaN(pageSize)) {
+        throw new Error4xx(400, '请求的分页参数格式错误')
+    }
     resData.data = await sqlGetSurveyAllTemplate(pageStart, pageSize)
     res.send(resData)
 })
@@ -387,5 +400,14 @@ export const toggleSurveyTemplateUnshare = asyncHandler(async (/** @type {Expres
         throw new Error4xx(400, '问卷 id 格式错误')
     }
     resData.data = await sqlSetSurveyTemplateShare(req.auth.userId, surveyId)
+    res.send(resData)
+})
+export const getShareSurveyTemplate = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const surveyId = Number(req.params.surveyId)
+    if (isNaN(surveyId)) {
+        throw new Error4xx(400, '问卷 id 格式错误')
+    }
+    resData.data = await sqlGetShareSurveyTemplate(req.auth.userId, surveyId)
     res.send(resData)
 })

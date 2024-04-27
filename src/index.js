@@ -42,6 +42,7 @@ import {
     setSurveyTemplateShare,
     setSurveyTemplateUnshare,
     toggleSurveyTemplateUnshare,
+    getShareSurveyTemplate,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -128,6 +129,7 @@ app.get('/api/survey/all-template', mockDelay, getSurveyAllTemplate)
 app.post('/api/survey/template/set-share/:surveyId', mockDelay, setSurveyTemplateShare)
 app.post('/api/survey/template/set-unshare/:surveyId', mockDelay, setSurveyTemplateUnshare)
 app.post('/api/survey/template/toggle-share/:surveyId', mockDelay, toggleSurveyTemplateUnshare)
+app.post('/api/survey/get-share-template/:surveyId', mockDelay, getShareSurveyTemplate)
 
 
 // 回答

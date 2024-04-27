@@ -26,6 +26,10 @@ interface ReqSurveyAche {
     id: TypeID
     title: string
     comment: string
+    /** 问卷类型 */
+    survey_type: 0 | 1 | 2
+    /** 是否是问卷模版 */
+    is_template: 0 | 1 | 2
 
     /** 对应 questionnaire_detail 表中的 structure_json  */
     structure_json: Object
