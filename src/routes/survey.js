@@ -24,7 +24,8 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
 
     /** @type {ReqSurveyAche} */
     const survey = req.body
-    let surveyId = survey.id
+    /** 属性名称对不上，导致每次缓存时都是新的问卷！ */
+    let surveyId = survey.surveyId || survey.id
     const userId = req.auth.userId
 
     if (!surveyId) {
