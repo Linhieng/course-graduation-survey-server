@@ -29,6 +29,8 @@ export const searchSurveyByPage = asyncHandler(async (/** @type {ExpressRequest}
     const is_template = req.body.is_template
     const created_range = req.body.created_range
     const updated_range = req.body.updated_range
+    const order_by = req.body.order_by
+    const order_type = req.body.order_type
 
     if (pageStart !== undefined) {
         pageStart = Number(pageStart)
@@ -48,6 +50,8 @@ export const searchSurveyByPage = asyncHandler(async (/** @type {ExpressRequest}
         is_template,
         created_range,
         updated_range,
+        order_by,
+        order_type,
     })
     res.send(resData)
 })

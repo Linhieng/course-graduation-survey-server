@@ -57,7 +57,9 @@ interface SearchSurveyByPageParams {
     /** 不设置表示所有。更新时间范围 */
     updated_range?: [number, number];
     /** 根据什么进行排序 */
-    order_by: Array<'updated_at' | 'created_at' | 'collect_visited' | 'collect_answer'>
+    order_by:
+        Array<'updated_at' | 'created_at' | 'collect_visited' | 'collect_answer'>
+        | 'updated_at' | 'created_at' | 'collect_visited' | 'collect_answer'
     /** 排序方式，升序还是降序 */
     order_type: 'DESC' | 'ASC'
 }

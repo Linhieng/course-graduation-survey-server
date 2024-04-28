@@ -11,6 +11,7 @@ import { useOneConn } from './index.js'
 export const sqlSearchSurveyByPage = ({
     userId, pageStart, pageSize,
     title,
+    comment,
     survey_type,
     status,
     is_template,
@@ -41,9 +42,13 @@ export const sqlSearchSurveyByPage = ({
         `
     values = [userId]
 
-    if (title !== undefined) {
+    if (title !== undefined && title.trim() !== '') {
         sql += ' and q.title like ? '
         values.push(`%${title}%`)
+    }
+    if (comment !== undefined && comment.trim() !== '') {
+        sql += ' and q.comment like ? '
+        values.push(`%${comment}%`)
     }
     if (survey_type !== undefined) {
         sql += ' and q.survey_type = ? '
@@ -76,11 +81,14 @@ export const sqlSearchSurveyByPage = ({
         sql += ' and q.updated_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000) '
         values.push(updated_range[0], updated_range(1))
     }
-    if (order_by !== undefined) {
-        sql += ` order by ${Array(order_by.length).fill('?').join(',')}  `
-        values.push(...order_by)
+    if (order_by !== undefined && order_by !== '') {
+        if (Array.isArray(order_by)) {
+            sql += ` order by ${order_by.join(' ')}  `
+        } else if (['updated_at', 'created_at', 'collect_visited', 'collect_answer'].includes(order_by)) {
+            sql += ` order by ${order_by} `
+        }
         if (order_type === 'ASC' || order_type === 'DESC') {
-            sql += order_type
+            sql += ` ${order_type} `
         }
     }
 
