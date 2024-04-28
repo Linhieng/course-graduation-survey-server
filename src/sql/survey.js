@@ -1,6 +1,128 @@
 import { SqlError } from '../utils/handleError.js'
 import { useOneConn } from './index.js'
 
+//
+
+/**
+ * 分页 + 条件获取问卷列表
+ * @param {SearchSurveyByPageParams} param0
+ * @returns
+ */
+export const sqlSearchSurveyByPage = ({
+    userId, pageStart, pageSize,
+    title,
+    survey_type,
+    status,
+    is_template,
+    created_range,
+    updated_range,
+    order_by,
+    order_type,
+}) => useOneConn(async (conn) => {
+    let sql, values, result
+
+    const res = {
+        total: 0,
+        pageStart,
+        pageSize,
+        survey_list: [],
+    }
+
+    sql = `
+            select ifnull(s.count_answer, 0) as collect_answer,
+                   ifnull(s.count_visit, 0)  as collect_visited,
+                   q.*
+            from questionnaire as q
+
+                     left join stat_count as s
+                               on q.id = s.survey_id
+
+            where q.creator_id = ?
+        `
+    values = [userId]
+
+    if (title !== undefined) {
+        sql += ' and q.title like ? '
+        values.push(`%${title}%`)
+    }
+    if (survey_type !== undefined) {
+        sql += ' and q.survey_type = ? '
+        values.push(survey_type)
+    }
+    if (status !== undefined) {
+        if (status === 0) {
+            sql += ' and q.is_deleted = ? '
+            values.push(1)
+        } else if (status === 1) {
+            sql += ' and q.is_deleted = ? and q.is_draft = ? '
+            values.push(0, 1)
+        } else if (status === 2) {
+            sql += ' and q.is_deleted = ? and q.is_draft = ? and q.is_valid = ? '
+            values.push(0, 0, 1)
+        } else if (status === 3) {
+            sql += ' and q.is_deleted = ? and q.is_draft = ? and q.is_valid = ? '
+            values.push(0, 0, 0)
+        }
+    }
+    if (is_template !== undefined) {
+        sql += ' and q.is_template = ? '
+        values.push(is_template)
+    }
+    if (created_range !== undefined) {
+        sql += ' and q.created_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000) '
+        values.push(created_range[0], created_range(1))
+    }
+    if (updated_range !== undefined) {
+        sql += ' and q.updated_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000) '
+        values.push(updated_range[0], updated_range(1))
+    }
+    if (order_by !== undefined) {
+        sql += ` order by ${Array(order_by.length).fill('?').join(',')}  `
+        values.push(...order_by)
+        if (order_type === 'ASC' || order_type === 'DESC') {
+            sql += order_type
+        }
+    }
+
+    // 既然我已经获取所有数据的，那真的不如直接自己实现分页……，而不是使用 limit
+    result = await conn.execute(sql, values)
+    res.total = result[0].length
+
+    if (pageStart !== undefined && pageSize !== undefined) {
+        const offset = '' + ((pageStart - 1) * pageSize)
+        const size = '' + pageSize
+        sql += ' LIMIT ?, ? '
+        values.push(offset, size)
+    }
+
+
+    result = await conn.execute(sql, values)
+    res.survey_list = result[0]
+    res.pageStart = pageStart || 1
+    res.pageSize = pageSize || result[0].length
+
+    return res
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * 获取一份模版问卷，如果 userId 等于要获取的问卷的创建者，则返回问卷模板。
  * 否则需要问卷为公开才可获取。

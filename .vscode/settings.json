@@ -55,7 +55,9 @@
         "editor.formatOnSave": true
     },
     "cSpell.words": [
+        "ifnull",
         "linhieng",
+        "UNIXTIME",
         "userid"
     ],
 }

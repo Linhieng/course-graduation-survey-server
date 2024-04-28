@@ -12,8 +12,49 @@ import {
     sqlGetSurveyMyTemplate,
     sqlSetSurveyTemplateShare,
     sqlGetShareSurveyTemplate,
+    sqlSearchSurveyByPage,
 } from '../sql/survey.js'
 import { Error4xx, asyncHandler, getRespondData } from '../utils/index.js'
+
+/** 搜索问卷 */
+export const searchSurveyByPage = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const userId = Number(req.auth.userId)
+    let pageStart = req.body.pageStart
+    let pageSize = req.body.pageSize
+    const title = req.body.title
+    const comment = req.body.comment
+    const survey_type = req.body.survey_type
+    const status = req.body.status
+    const is_template = req.body.is_template
+    const created_range = req.body.created_range
+    const updated_range = req.body.updated_range
+
+    if (pageStart !== undefined) {
+        pageStart = Number(pageStart)
+        if (isNaN(pageStart)) throw new Error4xx(400, '不正确的请求参数')
+    }
+    if (pageSize !== undefined) {
+        pageSize = Number(pageSize)
+        if (isNaN(pageSize)) throw new Error4xx(400, '不正确的请求参数')
+    }
+
+    resData.data = await sqlSearchSurveyByPage({
+        userId, pageStart, pageSize,
+        title,
+        comment,
+        survey_type,
+        status,
+        is_template,
+        created_range,
+        updated_range,
+    })
+    res.send(resData)
+})
+
+
+
+
 
 /**
  * 缓存用户问卷，如果问卷不存在，则自动创建问卷。

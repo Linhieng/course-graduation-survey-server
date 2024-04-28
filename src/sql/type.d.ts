@@ -34,3 +34,30 @@ interface CollectSurveyItem {
     /** 收集到的访问量 */
     collect_visited: number;
 }
+
+
+
+/** 分页+条件的请求参数，和前一个类似，但有些许差别 */
+interface SearchSurveyByPageParams {
+    userId: TypeID;
+    pageStart: number;
+    pageSize: number;
+
+    /** 未定义表示不设置条件 */
+    title?: string;
+    comment?: string;
+    /** 不设置表示所有。问卷类型。0 常规问卷，1 调研问卷，2 心理问卷 */
+    survey_type?: number;
+    /** 不设置表示所有。状态：0 表示删除，1 表示草稿，2 表示发布，3 表示停止 */
+    status?: number;
+    /** 不设置表示所有。0 表示非模版，1 表示私有模版，2 表示公有模版 */
+    is_template?: number;
+    /** 不设置表示所有。创建时间范围 */
+    created_range?: [number, number];
+    /** 不设置表示所有。更新时间范围 */
+    updated_range?: [number, number];
+    /** 根据什么进行排序 */
+    order_by: Array<'updated_at' | 'created_at' | 'collect_visited' | 'collect_answer'>
+    /** 排序方式，升序还是降序 */
+    order_type: 'DESC' | 'ASC'
+}
