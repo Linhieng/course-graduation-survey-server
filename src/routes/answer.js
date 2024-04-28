@@ -1,6 +1,18 @@
 import { STATUS_FAILED } from '../constants/response.js'
+import { sqlAnswerToggleValid } from '../sql/answer.js'
 import { sqlGetSurveyById, insertOneAnswer } from '../sql/index.js'
-import { asyncHandler, getRequestIp, getRespondData } from '../utils/index.js'
+import { Error4xx, asyncHandler, getRequestIp, getRespondData } from '../utils/index.js'
+
+export const answerToggleValid = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const ids = req.body.ids
+    const status = req.body.status
+    if (Array.isArray(ids) && typeof ids[0] !== 'number') {
+        throw new Error4xx(400, '参数错误')
+    }
+    await sqlAnswerToggleValid(ids, status)
+    res.send(resData)
+})
 
 /**
  * 获取问卷信息，只获取问卷，不获取皮肤等内容。

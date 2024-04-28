@@ -43,6 +43,7 @@ import {
     setSurveyTemplateUnshare,
     toggleSurveyTemplateUnshare,
     getShareSurveyTemplate,
+    answerToggleValid,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -133,6 +134,7 @@ app.post('/api/survey/get-share-template/:surveyId', mockDelay, getShareSurveyTe
 
 
 // 回答
+app.post('/api/answer/set-valid', mockDelay, answerToggleValid)
 app.get('/api/answer/:surveyId', mockDelay, answerGetSurveyByID)
 app.post('/api/answer/:surveyId', mockDelay, answerAddOne)
 
