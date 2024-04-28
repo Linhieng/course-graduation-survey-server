@@ -75,11 +75,11 @@ export const sqlSearchSurveyByPage = ({
     }
     if (created_range !== undefined) {
         sql += ' and q.created_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000) '
-        values.push(created_range[0], created_range(1))
+        values.push(created_range[0], created_range[1])
     }
     if (updated_range !== undefined) {
         sql += ' and q.updated_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000) '
-        values.push(updated_range[0], updated_range(1))
+        values.push(updated_range[0], updated_range[1])
     }
     if (order_by !== undefined && order_by !== '') {
         if (Array.isArray(order_by)) {
