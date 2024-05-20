@@ -556,7 +556,7 @@ export const sqlGetSurveyById = (id) => useOneConn(async (conn) => {
     result = await conn.execute(sql, values)
     if (result[0][0].n < 1) {
         sql = 'INSERT INTO stat_count(survey_id, count_visit, count_answer) value (?, ?, ?);'
-        values = [id, 1, 1]
+        values = [id, 1, 0]
         result = await conn.execute(sql, values)
     } else {
         sql = 'UPDATE stat_count set count_visit = count_visit + 1 where survey_id = ?;'
