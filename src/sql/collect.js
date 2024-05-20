@@ -52,6 +52,35 @@ export const sqlSearchSurveyListByPage = ({
             '' + ((pageStart - 1) * pageSize),
             '' + pageSize,
         ]
+
+        result = await conn.execute(sql, values)
+        res.survey_list = result[0]
+
+        sql = `
+            select count(*) as c
+            from questionnaire as q
+
+            where q.creator_id = ?
+              and title like ?
+              and is_draft = 0
+              and is_deleted = 0
+              and comment like ?
+              and is_valid like ?
+              and q.created_at BETWEEN FROM_UNIXTIME(? / 1000) AND FROM_UNIXTIME(? / 1000)
+            ;
+        `
+        values = [userId,
+            `%${title}%`,
+            `%${comment}%`,
+            `%${valid}`,
+            survey_create_range[0],
+            survey_create_range[1],
+        ]
+        result = await conn.execute(sql, values)
+        res.total = result[0][0].c
+
+        return res
+
     } else {
         sql = `
             select ifnull(s.count_answer, 0) as collect_answer,
@@ -79,32 +108,32 @@ export const sqlSearchSurveyListByPage = ({
             '' + ((pageStart - 1) * pageSize),
             '' + pageSize,
         ]
+
+        result = await conn.execute(sql, values)
+        res.survey_list = result[0]
+
+        sql = `
+            select count(*) as c
+            from questionnaire as q
+
+            where q.creator_id = ?
+              and title like ?
+              and is_draft = 0
+              and is_deleted = 0
+              and comment like ?
+              and is_valid like ?
+            ;
+        `
+        values = [userId,
+            `%${title}%`,
+            `%${comment}%`,
+            `%${valid}`,
+        ]
+        result = await conn.execute(sql, values)
+        res.total = result[0][0].c
+
+        return res
     }
-
-    result = await conn.execute(sql, values)
-    res.survey_list = result[0]
-
-    sql = `
-        select count(*) as c
-        from questionnaire as q
-
-        where q.creator_id = ?
-          and title like ?
-          and is_draft = 0
-          and is_deleted = 0
-          and comment like ?
-          and is_valid like ?
-        ;
-    `
-    values = [userId,
-        `%${title}%`,
-        `%${comment}%`,
-        `%${valid}`,
-    ]
-    result = await conn.execute(sql, values)
-    res.total = result[0][0].c
-
-    return res
 
 })
 /**
