@@ -115,7 +115,8 @@ export const updateAndPublishSurvey = asyncHandler(async (/** @type {ExpressRequ
 
     /** @type {ReqSurveyAche} */
     const survey = req.body
-    let surveyId = survey.id
+    /** 又是类型惹的祸。前端传递的问卷 id 可能写成 surveyId */
+    let surveyId = survey.id || survey.surveyId
     const userId = req.auth.userId
 
     if (!surveyId) {
