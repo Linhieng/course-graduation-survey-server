@@ -13,8 +13,23 @@ import {
     sqlSetSurveyTemplateShare,
     sqlGetShareSurveyTemplate,
     sqlSearchSurveyByPage,
+    sqlUpdateOneSurvey,
 } from '../sql/survey.js'
 import { Error4xx, asyncHandler, getRespondData } from '../utils/index.js'
+
+export const updateOneSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    const resData = getRespondData()
+    const id = Number(req.params.surveyId)
+    if (Number.isNaN(id)) {
+        throw new Error4xx(422, '问卷 id 格式错误')
+    }
+    const data = req.body
+
+    await sqlUpdateOneSurvey(req.auth.userId, id, data)
+
+    res.send(resData)
+
+})
 
 /** 搜索问卷 */
 export const searchSurveyByPage = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {

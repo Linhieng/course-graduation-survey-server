@@ -2,6 +2,17 @@ import { SqlError } from '../utils/handleError.js'
 import { useOneConn } from './index.js'
 
 //
+/** 更新问卷内容 */
+export const sqlUpdateOneSurvey = (userId, surveyId, data) => useOneConn(async (conn) => {
+    let sql, values
+
+    sql = `update questionnaire
+        set title = ?, comment = ?
+        where id = ? and creator_id = ?;
+    `
+    values = [data.title, data.comment, surveyId, userId]
+    await conn.execute(sql, values)
+})
 
 /**
  * 分页 + 条件获取问卷列表
