@@ -212,6 +212,7 @@ export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => 
     const res = {
         title: '',
         desc: '',
+        surveyData: {},
         answerList: [{
             id: 0,
             survey_id: surveyId,
@@ -252,6 +253,11 @@ export const sqlCollectGetSurveyByID = (surveyId) => useOneConn(async (conn) => 
     result = await conn.execute(sql, values)
     res.title = result[0][0].title
     res.desc = result[0][0].comment
+
+    sql = 'SELECT * FROM `questionnaire_detail` WHERE questionnaire_id = ? LIMIT 1;'
+    values = [surveyId]
+    result = await conn.execute(sql, values)
+    res.surveyData = result[0][0]
 
     return res
 })

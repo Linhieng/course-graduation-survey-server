@@ -550,6 +550,7 @@ export const sqlGetSurveyById = (id) => useOneConn(async (conn) => {
         return 'Not Found'
     }
 
+    /** 这里有问题，因为在后台中获取问卷时也会调用该函数，将此时不应该增加访问量 */
     // 添加一次访问量。感觉这种日志类的不适合放在这里。但考虑到事务，似乎又应该放在这里。
     sql = 'SELECT COUNT(*) as n from stat_count where survey_id = ? limit 1;'
     values = [id]
