@@ -180,7 +180,7 @@ export const login = asyncHandler(async (req, res) => {
      * @type {ResLoginData}
      */
     const data = {
-        // userId,
+        userId,
         token,
         // username: result[0].username,
     }
