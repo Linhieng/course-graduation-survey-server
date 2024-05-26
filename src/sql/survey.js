@@ -704,7 +704,7 @@ export const sqlGetPublishSurvey = (userId) => useOneConn(async (conn) => {
  */
 export const sqlGetDraftSurvey = (userId) => useOneConn(async (conn) => {
     // let sql = 'SELECT (`id`, `title`, `comment`, `sort_order`, `creator_id`, `is_draft`, `is_valid`, `is_deleted`, `created_at`, `updated_at`) FROM `questionnaire` where `creator_id` = ?'
-    const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ? and is_draft = 1 and is_deleted = 0 and is_template = 0'
+    const sql = 'SELECT * FROM `questionnaire` WHERE `creator_id` = ? and is_draft = 1 and is_deleted = 0 and is_template = 0 ORDER BY updated_at DESC;'
     let values = [userId]
     let result = await conn.execute(sql, values)
     return result[0]
