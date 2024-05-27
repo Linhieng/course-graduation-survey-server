@@ -71,6 +71,7 @@ export const getUserInfo = asyncHandler(async (/** @type {import('express').Requ
     }
     info.role = info.role === 1 ? 'user' : 'admin'
     resData.data = convertToCamelCase(info)
+    resData.data.username = req.auth.username
     res.send(resData)
 })
 
