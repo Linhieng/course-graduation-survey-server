@@ -11,9 +11,9 @@ export function getRequestIp(req) {
     /** @type {string} */
     let ip = req.headers['x-forwarded-for'] ||
         req.ip ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        req.connection.socket.remoteAddress ||
+        req.connection?.remoteAddress ||
+        req.socket?.remoteAddress ||
+        req.connection.socket?.remoteAddress ||
         ''
 
     if (ip === '::1') return '127.0.0.1'
