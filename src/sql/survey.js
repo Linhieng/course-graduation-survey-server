@@ -604,11 +604,11 @@ export const sqlUpdateAndPublishSurvey = (surveyId, title, comment, structure_js
     return surveyId
 })
 /** 更新已有问卷 */
-export const sqlUpdateSurvey = (surveyId, title, comment, structure_json) => useOneConn(async (conn) => {
+export const sqlUpdateSurvey = (surveyId, title, comment, structure_json, skin) => useOneConn(async (conn) => {
     let result, sql, values
 
-    sql = 'UPDATE `questionnaire`  SET title = ?, comment = ? WHERE id = ?;'
-    values = [title, comment, surveyId]
+    sql = 'UPDATE `questionnaire`  SET title = ?, comment = ?, skin = ? WHERE id = ?;'
+    values = [title, comment, skin, surveyId]
     await conn.execute(sql, values)
 
     sql = 'SELECT id FROM `questionnaire_detail` WHERE questionnaire_id = ?;'
@@ -628,10 +628,10 @@ export const sqlUpdateSurvey = (surveyId, title, comment, structure_json) => use
 })
 
 /** 创建一份新的问卷 */
-export const sqlCreateNewSurvey = ({ userId, title, comment, structure_json, survey_type, is_template }) => useOneConn(async (conn) => {
+export const sqlCreateNewSurvey = ({ userId, title, comment, structure_json, survey_type, is_template, skin }) => useOneConn(async (conn) => {
     let sql, values, result
-    sql = 'INSERT INTO `questionnaire` (creator_id, title, comment, survey_type, is_template) value (?, ?, ?, ?, ?)'
-    values = [userId, title, comment, survey_type, is_template]
+    sql = 'INSERT INTO `questionnaire` (creator_id, title, comment, survey_type, is_template, skin) value (?, ?, ?, ?, ?, ?)'
+    values = [userId, title, comment, survey_type, is_template, skin]
     result = await conn.execute(sql, values)
     const surveyId = result[0].insertId
     // 同时初始化一条问卷具体内容信息

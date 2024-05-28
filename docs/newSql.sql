@@ -1,3 +1,9 @@
+-- 问卷提供皮肤选项
+ALTER TABLE questionnaire
+    ADD skin JSON DEFAULT ('{ "background_image": "", "bg_img": "repeating-linear-gradient(0deg, #48c6ef 0%,#6f86d6 100%)" }')
+        NOT NULL COMMENT '问卷皮肤选项，主要是背景图片，实际数据类型由前端决定';
+
+
 -- 问卷可以提供问卷类型
 ALTER TABLE questionnaire
     ADD is_template TINYINT DEFAULT 0 NOT NULL COMMENT '是否是模版，0 表示不是，1 表示是模版，2 表示是模版，并且是共享的。';

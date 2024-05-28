@@ -94,10 +94,11 @@ export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest}
             userId, title: survey.title, comment: survey.comment, structure_json: survey.structure_json,
             survey_type: survey.survey_type,
             is_template: survey.is_template,
+            skin: survey.skin,
         })
     } else {
         // TODO: 不允许编辑非草稿问卷。
-        await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
+        await sqlUpdateSurvey(surveyId, survey.title, survey.comment, survey.structure_json, survey.skin)
     }
 
     resData.data = {

@@ -79,6 +79,7 @@ export const answerGetSurveyByID = asyncHandler(async (/** @type {ExpressRequest
         title: survey.title,
         comment: survey.comment,
         structure_json: surveyDetail.structure_json,
+        skin: survey.skin,
     }
     resData.data = surveyData
 

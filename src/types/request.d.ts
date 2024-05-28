@@ -31,6 +31,9 @@ interface ReqSurveyAche {
     /** 是否是问卷模版 */
     is_template: 0 | 1 | 2
 
+    /** 新增字段，问卷皮肤 */
+    skin: Object
+
     /** 对应 questionnaire_detail 表中的 structure_json  */
     structure_json: Object
 }
