@@ -215,10 +215,10 @@ export const sqlGetSurveyAllTemplate = (pageStart, pageSize) => useOneConn(async
         surveyTemplate: [],
     }
     if (pageStart && pageSize) {
-        sql = 'SELECT * FROM questionnaire where is_template = ? LIMIT ?, ?'
+        sql = 'SELECT * FROM questionnaire where is_template = ? ORDER BY updated_at DESC LIMIT ?, ? '
         values = [2, '' + ((pageStart - 1) * pageSize), '' + pageSize]
     } else {
-        sql = 'SELECT * FROM questionnaire where is_template = ?'
+        sql = 'SELECT * FROM questionnaire where is_template = ? ORDER BY updated_at DESC'
         values = [2]
     }
     result = await conn.execute(sql, values)
@@ -248,10 +248,10 @@ export const sqlGetSurveyMyTemplate = (userId, pageStart, pageSize) => useOneCon
         surveyTemplate: [],
     }
     if (pageStart && pageSize) {
-        sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ? LIMIT ?, ?'
+        sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ? ORDER BY updated_at DESC LIMIT ?, ?'
         values = [userId, '' + ((pageStart - 1) * pageSize), '' + pageSize]
     } else {
-        sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ?'
+        sql = 'SELECT * FROM questionnaire where is_template != 0 and creator_id = ? ORDER BY updated_at DESC'
         values = [userId]
     }
     result = await conn.execute(sql, values)
