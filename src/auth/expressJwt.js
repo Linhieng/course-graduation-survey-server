@@ -40,6 +40,10 @@ export function useExpressJwt(app) {
             '/api/user/login',
             '/api/user/signup',
             {
+                url: /^\/assets\/.*/,
+                methods: ['GET'],
+            },
+            {
                 url: /^\/api\/answer\/.*/,
                 methods: ['GET', 'POST'],
             },
