@@ -76,6 +76,30 @@ export const searchSurveyByPage = asyncHandler(async (/** @type {ExpressRequest}
 
 
 /**
+ * 创建一份新的问卷
+ */
+export const createSurvey = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {
+    /** @type {ResCacheSurvey} */
+    const resData = getRespondData()
+
+    /** @type {ReqSurveyAche} */
+    const survey = req.body
+    const userId = req.auth.userId
+
+    const surveyId = await sqlCreateNewSurvey({
+        userId, title: survey.title, comment: survey.comment, structure_json: survey.structure_json,
+        survey_type: survey.survey_type,
+        is_template: survey.is_template,
+        skin: survey.skin,
+    })
+
+    resData.data = {
+        surveyId,
+        time: new Date(),
+    }
+    res.send(resData)
+})
+/**
  * 缓存用户问卷，如果问卷不存在，则自动创建问卷。
  */
 export const cacheQuestionnaire = asyncHandler(async (/** @type {ExpressRequest} */req, /** @type {ExpressResponse} */ res) => {

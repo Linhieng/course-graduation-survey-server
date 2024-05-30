@@ -46,6 +46,7 @@ import {
     answerToggleValid,
     searchSurveyByPage,
     updateOneSurvey,
+    createSurvey,
 } from './routes/index.js'
 import cookieParser from 'cookie-parser'
 import { CODE_ERROR } from './constants/response.js'
@@ -110,6 +111,7 @@ app.get('/api/user/get-avatar/:userId', mockDelay, getUserAvatar)
 // 问卷
 app.post('/api/survey/update-one/:surveyId', mockDelay, updateOneSurvey)
 app.post('/api/survey/searchByPage', mockDelay, searchSurveyByPage)
+app.post('/api/survey/create', mockDelay, createSurvey)
 app.post('/api/survey/cache', mockDelay, cacheQuestionnaire)
 app.get('/api/survey/get/:surveyId', mockDelay, getSurveyById)
 app.get('/api/survey/get-for-edit/:surveyId', mockDelay, getSurveyForEdit)
