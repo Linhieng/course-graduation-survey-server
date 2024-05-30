@@ -152,11 +152,12 @@ export const updateAndPublishSurvey = asyncHandler(async (/** @type {ExpressRequ
             survey_type: survey.survey_type,
             is_template: survey.is_template,
             structure_json: survey.structure_json,
+            skin: survey.skin,
         })
     }
 
     // TODO: 不允许编辑非草稿问卷。
-    await sqlUpdateAndPublishSurvey(surveyId, survey.title, survey.comment, survey.structure_json)
+    await sqlUpdateAndPublishSurvey(surveyId, survey.title, survey.comment, survey.structure_json, survey.skin)
 
     resData.data = {
         surveyId,

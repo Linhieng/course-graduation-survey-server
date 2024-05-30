@@ -581,11 +581,11 @@ export const sqlGetSurveyById = (id) => useOneConn(async (conn) => {
 })
 
 /** 更新并发布已有问卷 */
-export const sqlUpdateAndPublishSurvey = (surveyId, title, comment, structure_json) => useOneConn(async (conn) => {
+export const sqlUpdateAndPublishSurvey = (surveyId, title, comment, structure_json, skin) => useOneConn(async (conn) => {
     let result, sql, values
 
-    sql = 'UPDATE `questionnaire`  SET title = ?, comment = ?, is_draft = 0, is_valid = 1 WHERE id = ?;'
-    values = [title, comment, surveyId]
+    sql = 'UPDATE `questionnaire`  SET title = ?, comment = ?, is_draft = 0, is_valid = 1, skin = ? WHERE id = ?;'
+    values = [title, comment, skin, surveyId]
     await conn.execute(sql, values)
 
     sql = 'SELECT id FROM `questionnaire_detail` WHERE questionnaire_id = ?;'
