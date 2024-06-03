@@ -2,4 +2,12 @@ out
 node_modules
 dist
 src/auth/revokedToken
-src/public/
+
+# 忽略 public 文件夹
+src/public/*
+# 但保留 public/js 文件夹
+!src/public/js/
+# 忽略 public/js 文件夹下的所有文件
+src/public/js/*
+# 但保留 public/js/icon-font.js 文件
+!src/public/js/icon-font.js
